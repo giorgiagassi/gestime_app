@@ -26,7 +26,6 @@ export class HomePage implements OnInit {
     private router: Router,
     private alertService: AlertService,
     private timbratureService: TimbraService,
-    private loadingService: LoadingService // Usa il servizio
   ) {}
 
   async ngOnInit() {
@@ -37,9 +36,6 @@ export class HomePage implements OnInit {
     }
   }
 
-  togglePwd() {
-    this.isPwd = !this.isPwd;
-  }
 
   async login() {
     try {
@@ -68,7 +64,7 @@ export class HomePage implements OnInit {
 
       const verified = await NativeBiometric.verifyIdentity({
         reason: 'Authentication',
-        title: 'Log in',
+        title: 'Accedi a Gestime',
         useFallback: true,
         maxAttempts: 2,
       })
@@ -90,12 +86,7 @@ export class HomePage implements OnInit {
       }
     } catch (e) {
       console.error('Biometric authentication failed', e);
-      await this.alertService.presentErrorAlert('Autenticazione biometrica fallita. Per favore riprova.');
     }
   }
 
-  openToast(msg: string) {
-    this.isToast = true;
-    this.toastMessage = msg;
-  }
 }
