@@ -45,5 +45,11 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSLocationUsageDescription</key>
+	<string>E' necessario concedere il permesso per la geolocalizzazione per far funzionare correttamente l'applicazione</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>' necessario concedere il permesso per la geolocalizzazione per far funzionare correttamente l'applicazione</string>
+	<key>NSUserNotificationsUsageDescription</key>
+	<string>' necessario concedere il permesso per l'invio delle notifiche per far funzionare correttamente l'applicazione</string>
 </dict>
 </plist>
