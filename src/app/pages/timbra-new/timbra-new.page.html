@@ -3,7 +3,13 @@
     <ion-chip slot="end">
       <ion-label>{{ user?.name }}</ion-label>
       <ion-avatar>
-        <img alt="user" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        <ng-container [ngSwitch]="user?.name">
+          <img *ngSwitchCase="'Didonna Nico'" alt="user" src="assets/img/griffin.jpg" />
+          <img *ngSwitchCase="'Palumbo Marco'" alt="user" src="assets/img/morata.jpg" />
+          <img *ngSwitchCase="'Colamussi Agostino'" alt="user" src="assets/img/lazza.jpg" />
+          <img *ngSwitchCase="'Alexandra Jarca'" alt="user" src="assets/img/cuore.png" />
+          <img *ngSwitchDefault alt="user" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
+        </ng-container>
       </ion-avatar>
     </ion-chip>
   </ion-toolbar>

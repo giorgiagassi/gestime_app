@@ -137,7 +137,6 @@ export class TimbraNewPage implements OnInit {
     this.updateTime();
     interval(1000).subscribe(() => this.updateTime());
     this.checkCurrentLocation();
-    interval(60000).subscribe(() => this.checkCurrentLocation());
   }
 
   async doRefresh(event: any) {
