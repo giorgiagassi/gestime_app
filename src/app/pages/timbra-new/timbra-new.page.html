@@ -2,19 +2,13 @@
   <ion-toolbar>
     <ion-chip slot="end">
       <ion-label>{{ user?.name }}</ion-label>
-      <ion-avatar>
-        <ng-container [ngSwitch]="user?.name">
-          <img *ngSwitchCase="'Didonna Nico'" alt="user" src="assets/img/Jeanette-Foshee-Simpsons-10-Family-Guy-Stewie-Griffin.32.png" />
-          <img *ngSwitchCase="'Palumbo Marco'" alt="user" src="assets/img/Sykonist-Looney-Tunes-Gossamer-Angry.256.png" />
-          <img *ngSwitchCase="'Colamussi Agostino'" alt="user" src="assets/img/Oxygen-Icons.org-Oxygen-Apps-preferences-web-browser-cookies.256.png" />
-          <img *ngSwitchCase="'Alexandra Jarca'" alt="user" src="assets/img/Mattahan-Ultrabuuf-Young-Lion.512.png" />
-          <img *ngSwitchCase="'Settanni Arianna'" alt="user" src="assets/img/Snaky-Reports-Summer-Sweets-Yogurt-ice.32.png" />
-          <img *ngSwitchCase="'Giuseppe Lonigro'" alt="user" src="assets/img/Jonathan-Rey-Simpsons-Homer-Simpson-03-Beer.256.png" />
-          <img *ngSwitchCase="'Giorgia Gassi'" alt="user" src="assets/img/Icons8-Windows-8-Ecommerce-Qr-Code.512.png" />
-          <img *ngSwitchCase="'Porcelli Marco'" alt="user" src="assets/img/Iconarchive-Incognito-Animal-2-Pig.512.png" />
-          <img *ngSwitchDefault alt="user" src="https://ionicframework.com/docs/img/demos/avatar.svg" />
-        </ng-container>
-      </ion-avatar>
+
+        <ion-avatar>
+          <img alt="user" [src]="user?.urlFileImage ? user?.urlFileImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+        </ion-avatar>
+
+
+
     </ion-chip>
   </ion-toolbar>
 </ion-header>
@@ -61,11 +55,15 @@
           <ion-icon slot="icon-only" name="eye"></ion-icon></ion-button>
       </ion-row>
       <ion-row class="ion-justify-content-center ion-align-items-center ion-padding ion-margin-bottom">
-      <ion-card>
-        <video width="80%"  height="80%" autoplay loop muted>
-          <source src="assets/img/mappa.mp4" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
+      <ion-card >
+<!--        <video width="80%"  height="80%" autoplay loop muted>-->
+<!--          <source src="assets/img/mappa.mp4" type="video/mp4">-->
+<!--          Your browser does not support the video tag.-->
+<!--        </video>-->
+        <ion-img
+          src="/assets/img/mappa_1.jpg"
+          alt="The Wisconsin State Capitol building in Madison, WI at night"
+        ></ion-img>
         <ion-card-header>
           <ion-card-subtitle *ngIf="currentAddress">{{ currentAddress }}</ion-card-subtitle>
         </ion-card-header>
