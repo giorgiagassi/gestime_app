@@ -79,7 +79,6 @@ export class TimbraNewPage implements OnInit {
     private loginService: LoginService,
   ) { }
 
-
   async ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state && navigation.extras.state['User']) {
@@ -120,28 +119,24 @@ export class TimbraNewPage implements OnInit {
     await this.requestGeolocationPermission();
     await this.getCurrentPosition();
 
-    if (this.user && this.user.sedi && this.user.sedi.length > 0) {
-      const closestSede = await this.findClosestSede();
-      if (closestSede) {
-        this.targetLocation = closestSede;
-        console.log('Target location set to closest sede:', this.targetLocation);
+    if (this.user && this.user.sedi) {
+      if (this.user.sedi.length > 0) {
+        const closestSede = await this.findClosestSede();
+        if (closestSede) {
+          this.targetLocation = closestSede;
+          console.log('Target location set to closest sede:', this.targetLocation);
+        } else {
+          this.isLocationEnabled = false;
+          console.log('No closest sede found, location checks disabled.');
+        }
+        this.checkCurrentLocation(); // Perform location check if there are sedi
       } else {
-        this.isLocationEnabled = false;
-        console.log('No closest sede found, location checks disabled.');
+        this.isNearLocation = true; // Directly enable location-dependent features if no sedi
       }
-    } else {
-      this.isLocationEnabled = false;
-      console.log('No sedi available, location checks disabled.');
     }
 
     this.updateTime();
     interval(1000).subscribe(() => this.updateTime());
-    this.checkCurrentLocation();
-  }
-
-  async doRefresh(event: any) {
-    await this.ngOnInit(); // Reload data
-    event.target.complete();
   }
 
   async ensureLocationEnabled(): Promise<boolean> {
@@ -189,6 +184,13 @@ export class TimbraNewPage implements OnInit {
       return false;
     }
   }
+
+
+  async doRefresh(event: any) {
+    await this.ngOnInit(); // Reload data
+    event.target.complete();
+  }
+
 
   async promptEnableLocation() {
     const alert = await this.alertService.presentAlert(
