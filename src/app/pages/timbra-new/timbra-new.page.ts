@@ -27,25 +27,25 @@ export class TimbraNewPage implements OnInit {
     {
       text: 'Uscita di servizio',
       data: {
-        action: 'share',
+        action: 'uscita_servizio',
       },
     },
     {
       text: 'Permesso personale',
       data: {
-        action: 'share',
+        action: 'permesso',
       },
     },
     {
       text: 'Cambio sede',
       data: {
-        action: 'share',
+        action: 'cambio',
       },
     },
     {
       text: 'Recupero ore',
       data: {
-        action: 'share',
+        action: 'recupero',
       },
     },
   ];
@@ -377,7 +377,7 @@ export class TimbraNewPage implements OnInit {
     );
   }
 
-  async onCheckOut() {
+  async onCheckOut(tipoUscita:string) {
     if (!this.user || !this.user.id) {
       console.error('User data is not available');
       return;
@@ -390,7 +390,7 @@ export class TimbraNewPage implements OnInit {
 
     await this.loadingService.presentLoading('Registrando l\'uscita...');
 
-    this.timbratureService.uscita(this.user.id).subscribe(
+    this.timbratureService.uscita(this.user.id, tipoUscita).subscribe(
       async (response) => {
         console.log('Uscita', response);
         this.user.checkOutTime = new Date().toISOString();
@@ -406,7 +406,7 @@ export class TimbraNewPage implements OnInit {
     );
   }
 
-  async onStartBreak() {
+  async onStartBreak(tipoUsicta: string) {
     if (!this.user || !this.user.id) {
       console.error('User data is not available');
       return;
@@ -419,7 +419,7 @@ export class TimbraNewPage implements OnInit {
 
     await this.loadingService.presentLoading('Registrando Inizio pausa...');
 
-    this.timbratureService.uscita(this.user.id).subscribe(
+    this.timbratureService.uscita(this.user.id, tipoUsicta).subscribe(
       async (response) => {
         this.user.checkOutTimePausa = new Date().toISOString();
         this.timbrature = this.getUserTimbrature();
@@ -462,7 +462,19 @@ export class TimbraNewPage implements OnInit {
     const action = event.detail.data?.action;
 
     if (action === 'uscita') {
-      await this.onCheckOut();
+      await this.onCheckOut('Uscita');
+    }
+    if (action === 'uscita_servizio') {
+      await this.onCheckOut('UscitaServizio');
+    }
+    if (action === 'permesso') {
+      await this.onCheckOut('PermessoPersonale');
+    }
+    if (action === 'cambio') {
+      await this.onCheckOut('CambioSede');
+    }
+    if (action === 'recupero') {
+      await this.onCheckOut('RecuperoOre');
     }
   }
 
@@ -471,7 +483,7 @@ export class TimbraNewPage implements OnInit {
     const action = event.detail.data?.action;
 
     if (action === 'inizio_pausa') {
-      await this.onStartBreak();
+      await this.onStartBreak('Pausa');
     }
     if (action === 'fine_pausa') {
       await this.onEndBreak();

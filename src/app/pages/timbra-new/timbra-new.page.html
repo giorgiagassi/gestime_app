@@ -18,7 +18,7 @@
     <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
     </ion-refresher-content>
   </ion-refresher>
-  <div class="container ion-page ion-padding-horizontal ion-padding-top ion-padding-bottom" style="margin-top: 10%; margin-bottom: 10%">
+  <div class="container ion-page  ion-padding-top ion-padding-bottom" style="margin-top: 10%; margin-bottom: 10%">
     <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
       <ion-card >
         <ion-card-header>
@@ -54,22 +54,25 @@
         <ion-button (click)="setOpen(true)" class="ion-float-end ion-padding">Riepilogo
           <ion-icon slot="icon-only" name="eye"></ion-icon></ion-button>
       </ion-row>
-      <ion-row class="ion-justify-content-center ion-align-items-center ion-padding ion-margin-bottom">
-      <ion-card >
-<!--        <video width="80%"  height="80%" autoplay loop muted>-->
-<!--          <source src="assets/img/mappa.mp4" type="video/mp4">-->
-<!--          Your browser does not support the video tag.-->
-<!--        </video>-->
-        <ion-img
-          src="/assets/img/mappa_1.jpg"
-          alt="The Wisconsin State Capitol building in Madison, WI at night"
-        ></ion-img>
-        <ion-card-header>
-          <ion-card-subtitle *ngIf="currentAddress">{{ currentAddress }}</ion-card-subtitle>
-        </ion-card-header>
-      </ion-card>
-      </ion-row>
+
     </ion-grid>
+
+      <!--      <ion-card >-->
+      <!--        <ion-img-->
+      <!--          src="/assets/img/8292849.jpg"-->
+      <!--          alt="The Wisconsin State Capitol building in Madison, WI at night"-->
+      <!--        ></ion-img>-->
+      <!--        <ion-card-header>-->
+      <!--          <ion-card-subtitle *ngIf="currentAddress">{{ currentAddress }}</ion-card-subtitle>-->
+      <!--        </ion-card-header>-->
+      <!--      </ion-card>-->
+      <ion-item>
+        <ion-thumbnail slot="start">
+          <img alt="Silhouette of a person's head" src="assets/img/Paomedia-Small-N-Flat-Map-map-marker.512.png" />
+        </ion-thumbnail>
+        <ion-label *ngIf="currentAddress"> {{ currentAddress }}</ion-label>
+      </ion-item>
+
   </div>
 
 </ion-content>
