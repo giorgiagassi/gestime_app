@@ -335,7 +335,7 @@ export class TimbraNewPage implements OnInit {
         timbrature.push({ type: 'Entrata', time: this.user.checkInTime, order: 1 });
       }
       if (this.user.checkOutTimePausa) {
-        timbrature.push({ type: 'Inzio Pausa', time: this.user.checkOutTimePausa, order: 2 });
+        timbrature.push({ type: 'Inizio Pausa', time: this.user.checkOutTimePausa, order: 2 });
       }
       if (this.user.checkInTimePausa) {
         timbrature.push({ type: 'Fine Pausa', time: this.user.checkInTimePausa, order: 3 });

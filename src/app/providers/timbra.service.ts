@@ -40,7 +40,7 @@ export class TimbraService {
   }
 
   uscita(userId: string, tipoUscita: string): Observable<any> {
-    const headers = { 'Content-Type': 'application/json', 'User': userId , 'Uscita': tipoUscita};
+    const headers = { 'Content-Type': 'application/json', 'User': userId , 'TipoUscita': tipoUscita};
 
       const httpOptions = {
         headers: new HttpHeaders(headers)
