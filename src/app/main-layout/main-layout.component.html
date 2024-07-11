@@ -1,0 +1,48 @@
+<ion-app>
+  <!-- Menu -->
+  <ion-menu side="start" menuId="first" contentId="main-content" >
+    <ion-header >
+      <ion-toolbar color="light">
+
+      </ion-toolbar>
+    </ion-header>
+    <ion-content color="light" >
+
+        <ion-item color="light">
+          <ion-icon aria-hidden="true" name="id-card-outline" slot="start"></ion-icon>
+          <ion-menu-toggle>
+
+            <ion-label routerLink="/timbra-new">Timbra</ion-label>
+          </ion-menu-toggle>
+        </ion-item>
+        <ion-item color="light">
+          <ion-icon name="list-outline" aria-hidden="true" slot="start"></ion-icon>
+          <ion-menu-toggle>
+            <ion-label routerLink="/richieste">Richieste</ion-label>
+          </ion-menu-toggle>
+        </ion-item>
+
+    </ion-content>
+  </ion-menu>
+
+  <!-- Main Content -->
+  <div class="ion-page" id="main-content">
+    <ion-header [translucent]="true">
+      <ion-toolbar>
+        <ion-buttons slot="start">
+          <ion-menu-button menu="first"></ion-menu-button>
+        </ion-buttons>
+        <ion-chip slot="end">
+          <ion-label>{{ user?.name }}</ion-label>
+          <ion-avatar>
+            <img alt="user" [src]="user?.urlFileImage ? user?.urlFileImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
+          </ion-avatar>
+        </ion-chip>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content>
+      <router-outlet></router-outlet>
+    </ion-content>
+  </div>
+</ion-app>
