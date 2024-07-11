@@ -1,17 +1,4 @@
-<ion-header [translucent]="true">
-  <ion-toolbar>
-    <ion-chip slot="end">
-      <ion-label>{{ user?.name }}</ion-label>
 
-        <ion-avatar>
-          <img alt="user" [src]="user?.urlFileImage ? user?.urlFileImage : 'https://ionicframework.com/docs/img/demos/avatar.svg'" />
-        </ion-avatar>
-
-
-
-    </ion-chip>
-  </ion-toolbar>
-</ion-header>
 
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
@@ -57,15 +44,6 @@
 
     </ion-grid>
 
-      <!--      <ion-card >-->
-      <!--        <ion-img-->
-      <!--          src="/assets/img/8292849.jpg"-->
-      <!--          alt="The Wisconsin State Capitol building in Madison, WI at night"-->
-      <!--        ></ion-img>-->
-      <!--        <ion-card-header>-->
-      <!--          <ion-card-subtitle *ngIf="currentAddress">{{ currentAddress }}</ion-card-subtitle>-->
-      <!--        </ion-card-header>-->
-      <!--      </ion-card>-->
       <ion-item>
         <ion-thumbnail slot="start">
           <img alt="Silhouette of a person's head" src="assets/img/Paomedia-Small-N-Flat-Map-map-marker.512.png" />

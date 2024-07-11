@@ -1,5 +1,7 @@
 import { NgModule } from '@angular/core';
 import { PreloadAllModules, RouterModule, Routes } from '@angular/router';
+import {MainLayoutComponent} from "./main-layout/main-layout.component";
+
 
 const routes: Routes = [
   {
@@ -12,9 +14,21 @@ const routes: Routes = [
     pathMatch: 'full'
   },
   {
-    path: 'timbra-new',
-    loadChildren: () => import('./pages/timbra-new/timbra-new.module').then(m => m.TimbraNewPageModule)
-  },
+    path: '',
+    component: MainLayoutComponent,
+    children: [
+      {
+        path: 'timbra-new',
+        loadChildren: () => import('./pages/timbra-new/timbra-new.module').then(m => m.TimbraNewPageModule)
+      },
+      {
+        path: 'richieste',
+        loadChildren: () => import('./pages/richieste/storico-richieste/storico-richieste.module').then(m => m.StoricoRichiesteModule)
+      },
+      {path:'nuova-richiesta',
+      loadChildren: () => import('./pages/richieste/nuova-richiesta/nuova-richiesta.module').then(m => m.NuovaRichiestaModule)}
+    ]
+  }
 ];
 
 @NgModule({

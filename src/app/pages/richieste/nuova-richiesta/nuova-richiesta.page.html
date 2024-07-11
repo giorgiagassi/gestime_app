@@ -1,0 +1,50 @@
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="container ion-page  ion-padding-top ion-padding-bottom">
+    <ion-grid style="height: 100%; width: 100%">
+      <ion-item>
+        <ion-select label="Tipo Inserimento" label-placement="stacked" [(ngModel)]="richiesta.tipoIns">
+          <ion-select-option value="Assenza">Assenza</ion-select-option>
+          <ion-select-option value="Timbratura">Timbratura</ion-select-option>
+          <ion-select-option value="Straordinario">Straordinario</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Da Data</ion-label>
+        <ion-input type="date" [(ngModel)]="richiesta.daData"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">A Data</ion-label>
+        <ion-input type="date" [(ngModel)]="richiesta.aData"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Giorno Intero" label-placement="stacked" [(ngModel)]="richiesta.giornoIntero">
+          <ion-select-option value="SI">SI</ion-select-option>
+          <ion-select-option value="NO">NO</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-label position="stacked">Num. Ore giorn.</ion-label>
+        <ion-input type="time" [(ngModel)]="richiesta.numOreGG"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-select label="Causalizzazione" label-placement="stacked" [(ngModel)]="richiesta.causalizzazione">
+          <ion-select-option *ngFor="let causa of causalizzazioni" [value]="causa.causalizzazione">
+            {{ causa.causalizzazione }} - {{ causa.descrizioneCausalizzazione }}
+          </ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item>
+        <ion-textarea label="Note" [(ngModel)]="richiesta.note"></ion-textarea>
+      </ion-item>
+      <ion-row>
+        <ion-col class="ion-text-center">
+          <ion-button color="success" (click)="inviaRichiesta()">Invia Richiesta</ion-button>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+</ion-content>

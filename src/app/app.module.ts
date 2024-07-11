@@ -10,9 +10,10 @@ import { CustomRouteReuseStrategy } from './custom-route-reuse-strategy';
 import {HTTP_INTERCEPTORS, HttpClientModule} from "@angular/common/http";
 import {HttpLoggingInterceptor} from "../http-logging.interceptor";
 import {AuthInterceptor} from "../../auth-interceptor";
+import {MainLayoutComponent} from "./main-layout/main-layout.component";
 
 @NgModule({
-  declarations: [AppComponent],
+  declarations: [AppComponent, MainLayoutComponent],
   imports: [
     BrowserModule,
     IonicModule.forRoot(),

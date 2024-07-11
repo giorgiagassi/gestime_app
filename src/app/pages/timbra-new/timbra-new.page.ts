@@ -6,7 +6,8 @@ import {TimbraService} from "../../providers/timbra.service";
 import {Geolocation, PositionOptions} from "@capacitor/geolocation";
 import {LoginService} from "../../providers/login.service";
 import { LoadingService } from '../../providers/loading.service';
-import {interval} from "rxjs"; // Importa il servizio
+import {interval} from "rxjs";
+import {BackButtonService} from "../../providers/backbutton.service"; // Importa il servizio
 
 
 @Component({
@@ -77,6 +78,7 @@ export class TimbraNewPage implements OnInit {
     private timbratureService: TimbraService,
     private loadingService: LoadingService, // Usa il servizio
     private loginService: LoginService,
+    private backButtonService: BackButtonService
   ) { }
 
   async ngOnInit() {
@@ -356,11 +358,20 @@ export class TimbraNewPage implements OnInit {
       return;
     }
 
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerCheckIn();
+      return;
+    }
+
     const isNear = await this.ensureLocationEnabled();
     if (!isNear) {
       return;
     }
 
+    await this.registerCheckIn();
+  }
+
+  private async registerCheckIn() {
     await this.loadingService.presentLoading('Registrando l\'entrata...');
 
     this.timbratureService.entrata(this.user.id).subscribe(
@@ -379,9 +390,14 @@ export class TimbraNewPage implements OnInit {
     );
   }
 
-  async onCheckOut(tipoUscita:string) {
+  async onCheckOut(tipoUscita: string) {
     if (!this.user || !this.user.id) {
       console.error('User data is not available');
+      return;
+    }
+
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerCheckOut(tipoUscita);
       return;
     }
 
@@ -390,6 +406,10 @@ export class TimbraNewPage implements OnInit {
       return;
     }
 
+    await this.registerCheckOut(tipoUscita);
+  }
+
+  private async registerCheckOut(tipoUscita: string) {
     await this.loadingService.presentLoading('Registrando l\'uscita...');
 
     this.timbratureService.uscita(this.user.id, tipoUscita).subscribe(
@@ -408,9 +428,14 @@ export class TimbraNewPage implements OnInit {
     );
   }
 
-  async onStartBreak(tipoUsicta: string) {
+  async onStartBreak(tipoUscita: string) {
     if (!this.user || !this.user.id) {
       console.error('User data is not available');
+      return;
+    }
+
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerStartBreak(tipoUscita);
       return;
     }
 
@@ -419,9 +444,13 @@ export class TimbraNewPage implements OnInit {
       return;
     }
 
+    await this.registerStartBreak(tipoUscita);
+  }
+
+  private async registerStartBreak(tipoUscita: string) {
     await this.loadingService.presentLoading('Registrando Inizio pausa...');
 
-    this.timbratureService.uscita(this.user.id, tipoUsicta).subscribe(
+    this.timbratureService.uscita(this.user.id, tipoUscita).subscribe(
       async (response) => {
         this.user.checkOutTimePausa = new Date().toISOString();
         this.timbrature = this.getUserTimbrature();
@@ -441,6 +470,22 @@ export class TimbraNewPage implements OnInit {
       return;
     }
 
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerEndBreak();
+      return;
+    }
+
+    await this.loadingService.presentLoading('Registrando la fine pausa...');
+
+    const isNear = await this.ensureLocationEnabled();
+    if (!isNear) {
+      return;
+    }
+
+    await this.registerEndBreak();
+  }
+
+  private async registerEndBreak() {
     await this.loadingService.presentLoading('Registrando la fine pausa...');
 
     this.timbratureService.entrata(this.user.id).subscribe(
@@ -458,6 +503,7 @@ export class TimbraNewPage implements OnInit {
       }
     );
   }
+
 
   async handleActionSheetDismiss(event: any) {
     const role = event.detail.role;

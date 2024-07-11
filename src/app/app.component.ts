@@ -4,8 +4,9 @@ import { Geolocation } from '@capacitor/geolocation';
 import { LocalNotifications, LocalNotificationSchema } from '@capacitor/local-notifications';
 import { LoginService } from './providers/login.service';
 import { Router } from '@angular/router';
-
+import { App } from '@capacitor/app';
 import { AlertService } from './providers/alert.service';
+import { Location } from '@angular/common';
 
 @Component({
   selector: 'app-root',
@@ -18,6 +19,7 @@ export class AppComponent implements OnInit {
     private loginService: LoginService,
     private platform: Platform,
     private router: Router,
+    private location: Location,
   ) {
     this.initializeApp();
   }
@@ -97,10 +99,25 @@ export class AppComponent implements OnInit {
       notifications: notificationsToSchedule
     });
   }
-
   initializeApp() {
     this.platform.ready().then(() => {
+      this.platform.backButton.subscribeWithPriority(10, () => {
+        this.handleBackButton();
+      });
     });
+  }
+
+  private handleBackButton() {
+    // Ottieni l'URL corrente
+    const currentUrl = this.router.url;
+
+    if (currentUrl === '/home') {
+      // Chiudi l'app se siamo sulla homepage
+      App.exitApp();
+    } else {
+      // Usa il metodo `back` di Location per navigare indietro
+      this.location.back();
+    }
   }
 
   private async checkLocationPermissions() {

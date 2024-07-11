@@ -1,0 +1,44 @@
+<ion-content [fullscreen]="true">
+  <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
+    </ion-refresher-content>
+  </ion-refresher>
+  <div class="container ion-page  ion-padding-top ion-padding-bottom">
+    <ion-item>
+      <ion-label>Seleziona Anno</ion-label>
+      <ion-select [(ngModel)]="selectedYear" (ionChange)="onYearChange()">
+        <ion-select-option *ngFor="let year of availableYears" [value]="year">{{ year }}</ion-select-option>
+      </ion-select>
+    </ion-item>
+    <ion-row class="ion-justify-content-end">
+      <ion-col class="ion-text-end">
+        <ion-button size="small" fill="outline" (click)="navigateToNuovaRichiesta()">
+          <ion-icon slot="start" name="add"></ion-icon>
+          Nuova Richiesta
+        </ion-button>
+      </ion-col>
+    </ion-row>
+
+    <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%; width: 100%">
+
+      <ion-card *ngFor="let richiesta of richieste">
+        <ion-label class="ion-padding">
+          <h2 class="ion-padding-start">{{ richiesta.causalizzazione }}</h2>
+          <p class="ion-padding-start">{{ richiesta.note }}</p>
+          <p class="ion-padding-start">Da: {{ richiesta.daData | date:'dd/MM/yyyy ' }}</p>
+          <p class="ion-padding-start">A: {{ richiesta.aData | date:'dd/MM/yyyy' }}</p>
+          <ion-chip *ngIf="richiesta.statoRichiesta === 'Approvata'" color="success">{{richiesta.statoRichiesta}}</ion-chip>
+          <ion-chip *ngIf="richiesta.statoRichiesta === 'Da Approvare'" color="warning">{{richiesta.statoRichiesta}}</ion-chip>
+          <ion-chip *ngIf="richiesta.statoRichiesta === 'Rifiutata'" color="danger">{{richiesta.statoRichiesta}}</ion-chip>
+        </ion-label>
+      </ion-card>
+
+
+    <ion-card *ngIf="richieste.length === 0">
+      <ion-card-header>
+        <ion-card-title>Nessuna richiesta trovata.</ion-card-title>
+      </ion-card-header>
+    </ion-card>
+    </ion-grid>
+  </div>
+</ion-content>
