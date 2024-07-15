@@ -66,32 +66,25 @@ export class AppComponent implements OnInit {
 
   async scheduleNotifications() {
     const notifications = [
-
       { id: 1, title: 'Promemoria', body: 'Ricordati di timbrare la pausa', hour: 14, minute: 35 },
       { id: 2, title: 'Promemoria', body: 'C N\' AMMA IJ', hour: 17, minute: 45 },
-
     ];
-
     const now = new Date();
 
     const notificationsToSchedule = notifications.map(notification => {
-      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate(), notification.hour, notification.minute, 0);
-      if (date > now) {
-        return {
-          id: notification.id,
-          title: notification.title,
-          body: notification.body,
-          schedule: { at: date },
-          sound: undefined,
-          attachments: undefined,
-          actionTypeId: "",
-          extra: null,
-          smallIcon: 'res://splash'
-        };
-      } else {
-        return null;
-      }
-    }).filter(n => n !== null) as LocalNotificationSchema[];
+      const dates = this.getNextWeekdays(notification.hour, notification.minute);
+      return dates.map(date => ({
+        id: notification.id + date.getTime(), // Ensure unique ID for each notification
+        title: notification.title,
+        body: notification.body,
+        schedule: { at: date },
+        sound: undefined,
+        attachments: undefined,
+        actionTypeId: "",
+        extra: null,
+        smallIcon: 'res://splash'
+      }));
+    }).flat();
 
     console.log('Notifiche da schedulare:', notificationsToSchedule);
 
@@ -99,6 +92,22 @@ export class AppComponent implements OnInit {
       notifications: notificationsToSchedule
     });
   }
+
+  private getNextWeekdays(hour: number, minute: number): Date[] {
+    const dates: Date[] = [];
+    const now = new Date();
+
+    for (let i = 0; i < 7; i++) {
+      const date = new Date(now.getFullYear(), now.getMonth(), now.getDate() + i, hour, minute, 0);
+      const day = date.getDay();
+      if (day >= 1 && day <= 5) { // Monday to Friday
+        dates.push(date);
+      }
+    }
+
+    return dates;
+  }
+
   initializeApp() {
     this.platform.ready().then(() => {
       this.platform.backButton.subscribeWithPriority(10, () => {
@@ -146,3 +155,4 @@ export class AppComponent implements OnInit {
     }
   }
 }
+

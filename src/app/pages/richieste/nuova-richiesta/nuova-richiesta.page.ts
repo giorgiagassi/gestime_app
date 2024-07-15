@@ -1,13 +1,10 @@
-
-
-
 import { Component, OnInit } from '@angular/core';
-import {Router} from "@angular/router";
-import {BackButtonService} from "../../../providers/backbutton.service";
-import {RichiesteService} from "../../../providers/richieste.service";
-import {Storage} from "@capacitor/storage";
-import {LoginService} from "../../../providers/login.service";
-import {AlertService} from "../../../providers/alert.service";
+import { Router } from "@angular/router";
+import { BackButtonService } from "../../../providers/backbutton.service";
+import { RichiesteService } from "../../../providers/richieste.service";
+import { Storage } from "@capacitor/storage";
+import { LoginService } from "../../../providers/login.service";
+import { AlertService } from "../../../providers/alert.service";
 
 @Component({
   selector: 'app-nuova-richiesta',
@@ -16,7 +13,7 @@ import {AlertService} from "../../../providers/alert.service";
 })
 export class NuovaRichiestaPage implements OnInit {
 
-causalizzazioni:any;
+  causalizzazioni: any;
   user: any;
   richiesta: any = {
     tipoIns: '',
@@ -27,12 +24,23 @@ causalizzazioni:any;
     causalizzazione: '',
     note: ''
   };
-  constructor( private router:Router,
-               private backButtonService: BackButtonService,
-               private richiesteService: RichiesteService,
-               private loginService: LoginService,
-               private alertService: AlertService,
-  ) { }
+  timbratura: any = {
+    note: null,
+    noteSelect: '',
+    daData: '',
+    aData: '',
+    tipoIns: 'Timbratura',
+    giornoIntero: 'SI',
+    numOreGG: '',
+    ggDiCalendario: null,
+    causalizzazione: 'TIMBRATURA',
+  };
+
+  constructor(private router: Router,
+              private backButtonService: BackButtonService,
+              private richiesteService: RichiesteService,
+              private loginService: LoginService,
+              private alertService: AlertService) { }
 
   async ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -72,36 +80,59 @@ causalizzazioni:any;
     }
   }
 
-
   async doRefresh(event: any) {
     event.target.complete();
   }
 
-getCaus():void {
-    this.richiesteService.getCausalizzazioni().subscribe( value => {
+  getCaus(): void {
+    this.richiesteService.getCausalizzazioni().subscribe(value => {
       this.causalizzazioni = value;
-      console.log('causa', this.causalizzazioni)
-    })
-}
+      console.log('causa', this.causalizzazioni);
+    });
+  }
+
+  onTipoInsChange() {
+    if (this.richiesta.tipoIns === 'Timbratura') {
+      this.richiesta.giornoIntero = 'SI';
+      this.richiesta.numOreGG = '';
+      this.richiesta.causalizzazione = 'TIMBRATURA';
+      this.timbratura.noteSelect = 'Entrata';
+    } else {
+      this.richiesta.numOreGG = null;
+      this.richiesta.causalizzazione = '';
+    }
+  }
+
+  syncDates() {
+    if (this.richiesta.tipoIns === 'Timbratura') {
+      this.richiesta.aData = this.richiesta.daData;
+    }
+  }
+
   async inviaRichiesta() {
-    const userId = this.user.id; // Sostituisci con il metodo per ottenere l'ID utente
+    const userId = this.user.id;
     const body = {
       ...this.richiesta,
       applicationUserID: userId,
       statoRichiesta: 'Da Approvare'
     };
 
-    this.richiesteService.inviaRichiesta(userId, body).subscribe(
-      async (response) => {
+    if (this.richiesta.tipoIns === 'Timbratura') {
+      body.aData = this.richiesta.daData; // Ensure aData is same as daData for Timbratura
+      body.noteSelect = this.timbratura.noteSelect; // Include noteSelect in the body
+    }
+
+    this.richiesteService.inviaRichiesta(userId, body).subscribe({
+      next: async (response) => {
         console.log('Response:', response);
         await this.alertService.presentSuccessAlert('Richiesta Inviata con successo');
-        this.router.navigate(['/richieste']); // Reindirizza l'utente alla pagina home o a un'altra pagina
+        this.router.navigate(['/richieste']);
       },
-      async (error) => {
+      error: async (error) => {
         console.error('Error:', error);
         await this.alertService.presentErrorAlert('Errore Durante l\'invio della richiesta');
       }
-    );
+    });
   }
 
 }

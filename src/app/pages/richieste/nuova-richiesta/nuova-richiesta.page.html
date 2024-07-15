@@ -3,34 +3,51 @@
     <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
     </ion-refresher-content>
   </ion-refresher>
-  <div class="container ion-page  ion-padding-top ion-padding-bottom">
+  <div class="container ion-page ion-padding-top ion-padding-bottom">
     <ion-grid style="height: 100%; width: 100%">
       <ion-item>
-        <ion-select label="Tipo Inserimento" label-placement="stacked" [(ngModel)]="richiesta.tipoIns">
+        <ion-select label="Tipo Inserimento" label-placement="stacked" [(ngModel)]="richiesta.tipoIns" (ionChange)="onTipoInsChange()">
           <ion-select-option value="Assenza">Assenza</ion-select-option>
           <ion-select-option value="Timbratura">Timbratura</ion-select-option>
           <ion-select-option value="Straordinario">Straordinario</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Da Data</ion-label>
+      <ion-item *ngIf="richiesta.tipoIns === 'Timbratura'">
+        <ion-select label="Stato Timbratura" label-placement="stacked" [(ngModel)]="timbratura.noteSelect">
+          <ion-select-option value="Entrata">Entrata</ion-select-option>
+          <ion-select-option value="Inizio Pausa">Inizio Pausa</ion-select-option>
+          <ion-select-option value="Fine Pausa">Fine Pausa</ion-select-option>
+          <ion-select-option value="Uscita">Uscita</ion-select-option>
+        </ion-select>
+      </ion-item>
+      <ion-item *ngIf="richiesta.tipoIns === 'Timbratura'">
+        <ion-label position="stacked">Data</ion-label>
+        <ion-input type="date" [(ngModel)]="richiesta.daData" (ionChange)="syncDates()"></ion-input>
+      </ion-item>
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
+        <ion-label position="stacked">Data Inizio</ion-label>
         <ion-input type="date" [(ngModel)]="richiesta.daData"></ion-input>
       </ion-item>
-      <ion-item>
-        <ion-label position="stacked">A Data</ion-label>
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
+        <ion-label position="stacked">Data Fine</ion-label>
         <ion-input type="date" [(ngModel)]="richiesta.aData"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item *ngIf="richiesta.tipoIns === 'Timbratura' ">
+        <ion-label position="stacked">Ora</ion-label>
+        <ion-input type="time" [(ngModel)]="richiesta.numOreGG"></ion-input>
+      </ion-item>
+
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
         <ion-select label="Giorno Intero" label-placement="stacked" [(ngModel)]="richiesta.giornoIntero">
           <ion-select-option value="SI">SI</ion-select-option>
           <ion-select-option value="NO">NO</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item>
-        <ion-label position="stacked">Num. Ore giorn.</ion-label>
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'  &&  richiesta.giornoIntero === 'NO'">
+        <ion-label position="stacked">N° Ore</ion-label>
         <ion-input type="time" [(ngModel)]="richiesta.numOreGG"></ion-input>
       </ion-item>
-      <ion-item>
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
         <ion-select label="Causalizzazione" label-placement="stacked" [(ngModel)]="richiesta.causalizzazione">
           <ion-select-option *ngFor="let causa of causalizzazioni" [value]="causa.causalizzazione">
             {{ causa.causalizzazione }} - {{ causa.descrizioneCausalizzazione }}
