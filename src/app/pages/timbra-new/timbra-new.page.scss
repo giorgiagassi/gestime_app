@@ -10,3 +10,11 @@ ion-card-title {
 ion-card-subtitle {
   --color: #fbfbfb;
 }
+.custom-permesso-button {
+  --background: #efbe1d; /* Colore di sfondo custom */
+  --color: #ffffff; /* Colore del testo custom */
+  border-radius: 12px; /* Angoli arrotondati */
+  padding: 12px 24px; /* Spaziatura */
+  font-size: 16px; /* Dimensione del testo */
+
+}

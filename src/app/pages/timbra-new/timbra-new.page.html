@@ -44,8 +44,14 @@
                           (didDismiss)="handleActionSheetDismiss($event)"></ion-action-sheet>
       </ion-row>
 
+<!--      USCITA BREVE-->
+      <ion-row class="ion-justify-content-center ion-align-items-center">
+        <ion-button id="open-action-sheet-PERMESSO"  size="small" class="custom-permesso-button"
+                   >Allontanamento Breve</ion-button>
+      </ion-row>
+
       <ion-row class="ion-justify-content-center ion-align-items-center ion-padding">
-        <ion-button (click)="setOpen(true)" class="ion-float-end ion-padding">Riepilogo
+        <ion-button (click)="setOpen(true)" class="ion-float-end ion-padding" color="secondary">Riepilogo
           <ion-icon slot="icon-only" name="eye"></ion-icon></ion-button>
       </ion-row>
 
