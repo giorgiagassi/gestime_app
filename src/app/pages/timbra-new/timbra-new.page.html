@@ -20,13 +20,20 @@
       </ion-row>
 
       <!-- pausa pranzo -->
+      <!-- pausa pranzo -->
       <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button id="open-action-sheet-pausa" color="secondary" size="large"
-                    [disabled]="!isNearLocation || !isLocationEnabled || isPausaPranzoDisabled()"
-        >Pausa Pranzo</ion-button>
-        <ion-action-sheet trigger="open-action-sheet-pausa" [buttons]="actionSheetButtonsPausa"
-                          (didDismiss)="handleActionSheetDismissPausa($event)"></ion-action-sheet>
+        <ion-button *ngIf="!user?.checkOutTimePausa" color="secondary" size="large"
+                    [disabled]="!isNearLocation || !isLocationEnabled"
+                    (click)="onStartBreak('Pausa')">Inizio Pausa</ion-button>
+
+        <ion-button *ngIf="user?.checkOutTimePausa && !user?.checkInTimePausa" color="secondary" size="large"
+                    [disabled]="!isNearLocation || !isLocationEnabled"
+                    (click)="onEndBreak()">Fine Pausa</ion-button>
+
+        <ion-button *ngIf="user?.checkOutTimePausa && user?.checkInTimePausa" color="secondary" size="large"
+                    disabled>Pausa completata</ion-button>
       </ion-row>
+
 
       <!-- uscita -->
       <ion-row class="ion-justify-content-center ion-align-items-center">
