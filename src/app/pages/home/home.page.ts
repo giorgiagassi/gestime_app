@@ -42,7 +42,6 @@ export class HomePage implements OnInit {
       const response = await this.loginService.login(this.userEmail, this.password, this.rememberMe, this.enableBiometrics);
       console.log('Login successful', response);
       this.timbratureService.setUser(response);
-      await this.alertService.presentSuccessAlert('Login effettuato con successo');
       const navigationExtras: NavigationExtras = {
         state: {
           user: response

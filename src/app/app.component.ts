@@ -67,7 +67,6 @@ export class AppComponent implements OnInit {
   async scheduleNotifications() {
     const notifications = [
       { id: 1, title: 'Promemoria', body: 'Ricordati di timbrare la pausa', hour: 14, minute: 35 },
-      { id: 2, title: 'Promemoria', body: 'C N\' AMMA IJ', hour: 17, minute: 45 },
     ];
     const now = new Date();
 

@@ -50,35 +50,18 @@ export class TimbraNewPage implements OnInit {
       },
     },
   ];
-  public actionSheetButtonsPausa = [
-    {
-      text: 'Inizio Pausa',
-      role: 'destructive',
-      data: {
-        action: 'inizio_pausa',
-      },
-    },
-    {
-      text: 'Fine Pausa',
-      data: {
-        action: 'fine_pausa',
-      },
-
-    }
-  ];
   isNearLocation: boolean = false;
   targetLocation: { latitude: any, longitude: any } | null = null;
   distanceThreshold = 30;
   timbrature: any[] = [];
   isLocationEnabled: boolean = true;
-
+  remainingWorkHours = 0;
   constructor(
     private alertService: AlertService, // Usa il servizio
     private router: Router,
     private timbratureService: TimbraService,
     private loadingService: LoadingService, // Usa il servizio
     private loginService: LoginService,
-    private backButtonService: BackButtonService
   ) { }
 
   async ngOnInit() {
@@ -93,7 +76,7 @@ export class TimbraNewPage implements OnInit {
           const userData = await this.loginService.getuserData(userId).toPromise();
           this.user = userData;
           console.log('User data loaded from API:', this.user);
-
+          this.loadRemainingWorkHours(); // Carica le ore restanti dall'API
         } catch (error) {
           console.error('Failed to load user data from API:', error);
           await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
@@ -104,6 +87,7 @@ export class TimbraNewPage implements OnInit {
           try {
             this.user = await this.loginService.getuserData(value).toPromise();
             console.log('User data loaded from API:', this.user);
+
           } catch (error) {
             console.error('Failed to load user data from API:', error);
             await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
@@ -582,9 +566,6 @@ export class TimbraNewPage implements OnInit {
     this.isModalOpen = false;
   }
 
-  isPausaPranzoDisabled(): boolean {
-    return !!this.user?.checkOutTimePausa && !!this.user?.checkInTimePausa;
-  }
 
   currentTime!: string;
   updateTime() {
@@ -609,5 +590,37 @@ export class TimbraNewPage implements OnInit {
     const data = await response.json();
     console.log(data)
     this.currentAddress = data.display_name;
+  }
+
+  // Funzione per caricare le ore restanti dall'API
+  async loadRemainingWorkHours() {
+    try {
+      const response = await this.user.oreRestanti
+      this.remainingWorkHours = response.remainingWorkHours; // Imposta le ore restanti
+    } catch (error) {
+      console.error('Errore nel caricamento delle ore restanti', error);
+    }
+  }
+
+
+  // Restituisce il colore della barra di progresso in base alle ore restanti
+  getProgressColor(): string {
+    if (this.remainingWorkHours > 0) {
+      return 'green'; // Rosso se ci sono ancora ore da lavorare
+    } else if (this.remainingWorkHours === 0) {
+      return 'blue'; // Blu se le ore restanti sono esattamente 0
+    } else {
+      return 'red'; // Verde se si è superato il tempo di lavoro
+    }
+  }
+  // Cambia il colore del testo in base alle ore restanti
+  getTextColorClass(): string {
+    if (this.remainingWorkHours > 0) {
+      return 'text-success'; // Colore rosso per ore restanti positive
+    } else if (this.remainingWorkHours === 0) {
+      return 'text-primary'; // Colore blu per 0 ore restanti
+    } else {
+      return 'text-danger'; // Colore verde per ore negative
+    }
   }
 }
