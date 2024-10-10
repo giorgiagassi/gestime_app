@@ -10,6 +10,9 @@ import { catchError, map } from 'rxjs/operators';
 export class TimbraService {
   private apiEntrata = 'https://www.gestime.it/Account/Entrata';
   private apiUscita = 'https://www.gestime.it/Account/Uscita';
+  private apiPermessoInizio = 'https://www.gestime.it/Leave/Inizio';
+  private apiPermessoFine = 'https://www.gestime.it/Leave/Fine';
+
   private _user = signal<any>(null);
 
   constructor(private http: HttpClient) { }
@@ -66,4 +69,39 @@ export class TimbraService {
     console.error(errorMessage);
     return throwError(errorMessage);
   }
+
+  permessoInizio(userId: string): Observable<any> {
+    const headers = { 'Content-Type': 'application/json', 'User': userId };
+
+    const httpOptions = {
+      headers: new HttpHeaders(headers)
+    };
+    return this.http.get(this.apiPermessoInizio, httpOptions)
+      .pipe(
+        map(response => {
+          console.log('permesso inizio response:', response); // Log di debug
+          return response;
+        }),
+        catchError(this.handleError)
+      );
+
+  }
+  permessoFine(userId: string): Observable<any> {
+    const headers = { 'Content-Type': 'application/json', 'User': userId };
+
+    const httpOptions = {
+      headers: new HttpHeaders(headers)
+    };
+    return this.http.get(this.apiPermessoFine, httpOptions)
+      .pipe(
+        map(response => {
+          console.log('permesso fine response:', response); // Log di debug
+          return response;
+        }),
+        catchError(this.handleError)
+      );
+
+  }
+
+
 }

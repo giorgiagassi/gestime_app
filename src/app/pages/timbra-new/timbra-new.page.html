@@ -10,13 +10,16 @@
     <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
       <ion-card >
         <ion-card-header>
-          <ion-card-title class="ion-text-center"> Ore Restanti: {{ user.oreRestanti }}</ion-card-title>
+          <ion-card-title class="ion-text-center"> Ore Restanti: {{ user?.oreRestanti }}</ion-card-title>
         </ion-card-header>
+        <ion-card-content>
+          <ion-progress-bar [value]="progress" color="light" [buffer]="buffer"></ion-progress-bar>
+        </ion-card-content>
       </ion-card>
       <!-- ingresso -->
       <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-button id="open-action-sheet-ingresso" color="success" size="large"
-                    [disabled]="!isNearLocation || user?.checkInTime || !isLocationEnabled"
+                    [disabled]="!isNearLocation || user?.checkInTime || !isLocationEnabled || user?.permessiBrevi.length > 0"
                     (click)="onCheckIn()">Ingresso</ion-button>
       </ion-row>
 
@@ -24,14 +27,14 @@
       <!-- pausa pranzo -->
       <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-button *ngIf="!user?.checkOutTimePausa" color="secondary" size="large"
-                    [disabled]="!isNearLocation || !isLocationEnabled"
+                    [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
                     (click)="onStartBreak('Pausa')">Inizio Pausa</ion-button>
 
         <ion-button *ngIf="user?.checkOutTimePausa && !user?.checkInTimePausa" color="secondary" size="large"
-                    [disabled]="!isNearLocation || !isLocationEnabled"
+                    [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
                     (click)="onEndBreak()">Fine Pausa</ion-button>
 
-        <ion-button *ngIf="user?.checkOutTimePausa && user?.checkInTimePausa" color="secondary" size="large"
+        <ion-button *ngIf="user?.checkOutTimePausa && user?.checkInTimePausa " color="secondary" size="large"
                     disabled>Pausa completata</ion-button>
       </ion-row>
 
@@ -39,7 +42,7 @@
       <!-- uscita -->
       <ion-row class="ion-justify-content-center ion-align-items-center">
         <ion-button id="open-action-sheet-uscita" color="danger" size="large"
-                    [disabled]="!isNearLocation || user?.checkOutTime || !isLocationEnabled"
+                    [disabled]="!isNearLocation || user?.checkOutTime || !isLocationEnabled || user?.permessiBrevi.length > 0"
         >Uscita</ion-button>
         <ion-action-sheet trigger="open-action-sheet-uscita" [buttons]="actionSheetButtonsUscita"
                           (didDismiss)="handleActionSheetDismiss($event)"></ion-action-sheet>
@@ -47,7 +50,7 @@
 
 <!--      USCITA BREVE-->
       <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button id="open-action-sheet-PERMESSO"  size="small" class="custom-permesso-button"
+        <ion-button id="open-action-sheet-PERMESSO"  size="small" class="custom-permesso-button" expand="block" (click)="setOpenPermesso(true)"  [disabled]="!isNearLocation || !isLocationEnabled"
                    >Permesso Breve</ion-button>
       </ion-row>
 
@@ -98,6 +101,7 @@
           </ion-card-content>
         </ion-card>
       </div>
+
       <ion-card *ngIf="timbrature.length === 0">
         <ion-card-header>
           <ion-card-title>Nessuna timbratura effettuata.</ion-card-title>
@@ -106,4 +110,50 @@
     </ion-content>
   </ng-template>
 </ion-modal>
+<ion-modal [isOpen]="isModalOpenPermesso" (ionModalWillDismiss)="handleModalDismissPermesso()">
+  <ng-template>
+    <ion-header>
+      <ion-toolbar>
+        <ion-title>Timbra Permesso Breve </ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="setOpenPermesso(false)"><ion-icon name="close"></ion-icon></ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+    <ion-content class="ion-padding">
+      <ion-row class="ion-justify-content-between">
+        <ion-col>
+          <ion-button id="open-action-sheet-inizio-permesso" color="success" size="large"
+                      [disabled]="!isNearLocation || user?.permessiBrevi[0].inizioPermesso || !isLocationEnabled"
+                      (click)="onCheckInPermesso()" >Inizio Permesso</ion-button>
+        </ion-col>
+        <ion-col>
+          <ion-button id="open-action-sheet-fine-permesso" color="danger" size="large"
+                      [disabled]="!isNearLocation || !isLocationEnabled"
+                      (click)="onCheckOutPermesso()">Fine Permesso</ion-button>
+        </ion-col>
+      </ion-row>
+      <div *ngIf="user?.permessiBrevi.length > 0">
+        <ion-card >
+          <ion-card-header>
+            <ion-card-title>Inzio Permesso</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            {{ user?.permessiBrevi[0]?.inizioPermesso | date:'dd/MM/yyyy HH:mm'}}
+          </ion-card-content>
+        </ion-card>
+        <ion-card *ngIf="user?.checkInTime && user?.checkOutTime && user?.checkOutTimePausa && user?.checkInTimePausa" color="tertiary">
+          <ion-card-header>
+            <ion-card-title>Totale Ore</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            {{ user.totOre }}
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+    </ion-content>
+  </ng-template>
+</ion-modal>
+
 

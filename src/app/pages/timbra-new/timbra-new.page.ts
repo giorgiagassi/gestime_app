@@ -7,7 +7,7 @@ import {Geolocation, PositionOptions} from "@capacitor/geolocation";
 import {LoginService} from "../../providers/login.service";
 import { LoadingService } from '../../providers/loading.service';
 import {interval} from "rxjs";
-import {BackButtonService} from "../../providers/backbutton.service"; // Importa il servizio
+
 
 
 @Component({
@@ -55,14 +55,19 @@ export class TimbraNewPage implements OnInit {
   distanceThreshold = 30;
   timbrature: any[] = [];
   isLocationEnabled: boolean = true;
-  remainingWorkHours = 0;
+  progress: number = 0
+  buffer = 0;
   constructor(
     private alertService: AlertService, // Usa il servizio
     private router: Router,
     private timbratureService: TimbraService,
     private loadingService: LoadingService, // Usa il servizio
     private loginService: LoginService,
-  ) { }
+  ) {
+
+
+
+  }
 
   async ngOnInit() {
     const navigation = this.router.getCurrentNavigation();
@@ -75,8 +80,8 @@ export class TimbraNewPage implements OnInit {
         try {
           const userData = await this.loginService.getuserData(userId).toPromise();
           this.user = userData;
+          this.calculateProgress();
           console.log('User data loaded from API:', this.user);
-          this.loadRemainingWorkHours(); // Carica le ore restanti dall'API
         } catch (error) {
           console.error('Failed to load user data from API:', error);
           await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
@@ -489,6 +494,80 @@ export class TimbraNewPage implements OnInit {
   }
 
 
+  async onCheckInPermesso() {
+    if (!this.user || !this.user.id) {
+      console.error('User data is not available');
+      return;
+    }
+
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerCheckInPermesso();
+      return;
+    }
+
+    const isNear = await this.ensureLocationEnabled();
+    if (!isNear) {
+      return;
+    }
+
+    await this.registerCheckInPermesso();
+  }
+
+  private async registerCheckInPermesso() {
+    await this.loadingService.presentLoading('Registrando l\'inizio del permesso...');
+
+    this.timbratureService.permessoInizio(this.user.id).subscribe(
+      async (response) => {
+        console.log('Inizio Permesso', response);
+        this.timbrature = this.getUserTimbrature();
+        await this.loadingService.dismissLoading();
+        await this.alertService.presentSuccessAlert('Inizio permesso registrato con successo');
+      },
+      async (error) => {
+        console.error('Errore Entrata', error);
+        await this.loadingService.dismissLoading();
+        await this.alertService.presentErrorAlert('Errore durante la registrazione dell\'entrata.');
+      }
+    );
+  }
+
+  async onCheckOutPermesso() {
+    if (!this.user || !this.user.id) {
+      console.error('User data is not available');
+      return;
+    }
+
+    if (this.user.sedi && this.user.sedi.length === 0) {
+      await this.registerCheckOutPermesso();
+      return;
+    }
+
+    const isNear = await this.ensureLocationEnabled();
+    if (!isNear) {
+      return;
+    }
+
+    await this.registerCheckOutPermesso();
+  }
+
+  private async registerCheckOutPermesso() {
+    await this.loadingService.presentLoading('Registrando la fine del permesso...');
+
+    this.timbratureService.permessoFine(this.user.id).subscribe(
+      async (response) => {
+        console.log('Fine Permesso', response);
+        this.timbrature = this.getUserTimbrature();
+        await this.loadingService.dismissLoading();
+        await this.alertService.presentSuccessAlert('Fine permesso registrato con successo');
+      },
+      async (error) => {
+        console.error('Errore permesso', error);
+        await this.loadingService.dismissLoading();
+        await this.alertService.presentErrorAlert('Errore durante la registrazione.');
+      }
+    );
+  }
+
   async handleActionSheetDismiss(event: any) {
     const role = event.detail.role;
     const action = event.detail.data?.action;
@@ -510,22 +589,16 @@ export class TimbraNewPage implements OnInit {
     }
   }
 
-  async handleActionSheetDismissPausa(event: any) {
-    const role = event.detail.role;
-    const action = event.detail.data?.action;
 
-    if (action === 'inizio_pausa') {
-      await this.onStartBreak('Pausa');
-    }
-    if (action === 'fine_pausa') {
-      await this.onEndBreak();
-    }
-  }
 
   isModalOpen = false;
+  isModalOpenPermesso = false;
 
   setOpen(isOpen: boolean) {
     this.isModalOpen = isOpen;
+  }
+  setOpenPermesso(isOpen: boolean) {
+    this.isModalOpenPermesso = isOpen;
   }
 
   getFormattedTotOre(): string {
@@ -565,6 +638,9 @@ export class TimbraNewPage implements OnInit {
   async handleModalDismiss() {
     this.isModalOpen = false;
   }
+  async handleModalDismissPermesso() {
+    this.isModalOpenPermesso = false;
+  }
 
 
   currentTime!: string;
@@ -591,36 +667,38 @@ export class TimbraNewPage implements OnInit {
     console.log(data)
     this.currentAddress = data.display_name;
   }
-
-  // Funzione per caricare le ore restanti dall'API
-  async loadRemainingWorkHours() {
-    try {
-      const response = await this.user.oreRestanti
-      this.remainingWorkHours = response.remainingWorkHours; // Imposta le ore restanti
-    } catch (error) {
-      console.error('Errore nel caricamento delle ore restanti', error);
+  calculateProgress() {
+    if (!this.user?.oreRestanti || !this.user?.oreLavorative) {
+      console.error("Ore restanti o ore lavorative non definite!");
+      return;
     }
+
+    // Convertire le ore restanti in secondi
+    const oreRestantiArray = this.user.oreRestanti.split(':').map(Number);
+    const oreRestantiInSecondi = (oreRestantiArray[0] * 3600) + (oreRestantiArray[1] * 60) + (oreRestantiArray[2]);
+
+    // Convertire le ore lavorative in secondi
+    const oreLavorativeArray = this.user.oreLavorative.split(':').map(Number);
+    const oreLavorativeInSecondi = (oreLavorativeArray[0] * 3600) + (oreLavorativeArray[1] * 60) + (oreLavorativeArray[2]);
+
+    // Se ore restanti sono negative, rappresentano il tempo già passato
+    const oreLavorateInSecondi = oreLavorativeInSecondi - Math.abs(oreRestantiInSecondi);
+
+    // Calcolo del progresso
+    this.progress = oreLavorateInSecondi / oreLavorativeInSecondi;
+
+    // Assicurarsi che il valore di progresso sia compreso tra 0 e 1
+    if (this.progress > 1) {
+      this.progress = 1;
+    } else if (this.progress < 0) {
+      this.progress = 0;
+    }
+
+    console.log('Progress:', this.progress); // Debug per vedere il calcolo
   }
 
 
-  // Restituisce il colore della barra di progresso in base alle ore restanti
-  getProgressColor(): string {
-    if (this.remainingWorkHours > 0) {
-      return 'green'; // Rosso se ci sono ancora ore da lavorare
-    } else if (this.remainingWorkHours === 0) {
-      return 'blue'; // Blu se le ore restanti sono esattamente 0
-    } else {
-      return 'red'; // Verde se si è superato il tempo di lavoro
-    }
-  }
-  // Cambia il colore del testo in base alle ore restanti
-  getTextColorClass(): string {
-    if (this.remainingWorkHours > 0) {
-      return 'text-success'; // Colore rosso per ore restanti positive
-    } else if (this.remainingWorkHours === 0) {
-      return 'text-primary'; // Colore blu per 0 ore restanti
-    } else {
-      return 'text-danger'; // Colore verde per ore negative
-    }
-  }
+
+
+
 }
