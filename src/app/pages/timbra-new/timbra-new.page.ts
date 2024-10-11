@@ -135,12 +135,6 @@ export class TimbraNewPage implements OnInit {
       return true; // No location checks required
     }
 
-    const options: PositionOptions = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    };
-
     try {
       const hasPermission = await Geolocation.checkPermissions();
       if (hasPermission.location !== 'granted') {
@@ -231,11 +225,6 @@ export class TimbraNewPage implements OnInit {
   }
 
   async requestGeolocationPermission() {
-    const options: PositionOptions = {
-      enableHighAccuracy: true,
-      timeout: 5000,
-      maximumAge: 0
-    };
 
     try {
       const hasPermission = await Geolocation.checkPermissions();
@@ -667,35 +656,50 @@ export class TimbraNewPage implements OnInit {
     console.log(data)
     this.currentAddress = data.display_name;
   }
+
+
+  isInEccedenza: boolean = false;
+
+
   calculateProgress() {
     if (!this.user?.oreRestanti || !this.user?.oreLavorative) {
       console.error("Ore restanti o ore lavorative non definite!");
       return;
     }
 
-    // Convertire le ore restanti in secondi
-    const oreRestantiArray = this.user.oreRestanti.split(':').map(Number);
+    // Controlla se le ore restanti sono negative (indicative di ore restanti)
+    const isNegative = this.user.oreRestanti.startsWith('-');
+    const oreRestantiString = isNegative ? this.user.oreRestanti.substring(1) : this.user.oreRestanti;
+
+    // Converti le ore restanti in secondi
+    const oreRestantiArray = oreRestantiString.split(':').map(Number);
     const oreRestantiInSecondi = (oreRestantiArray[0] * 3600) + (oreRestantiArray[1] * 60) + (oreRestantiArray[2]);
 
-    // Convertire le ore lavorative in secondi
+    // Converti le ore lavorative in secondi
     const oreLavorativeArray = this.user.oreLavorative.split(':').map(Number);
     const oreLavorativeInSecondi = (oreLavorativeArray[0] * 3600) + (oreLavorativeArray[1] * 60) + (oreLavorativeArray[2]);
 
     // Se ore restanti sono negative, rappresentano il tempo già passato
-    const oreLavorateInSecondi = oreLavorativeInSecondi - Math.abs(oreRestantiInSecondi);
+    const oreLavorateInSecondi = oreLavorativeInSecondi - oreRestantiInSecondi;
 
     // Calcolo del progresso
     this.progress = oreLavorateInSecondi / oreLavorativeInSecondi;
 
-    // Assicurarsi che il valore di progresso sia compreso tra 0 e 1
+    // Assicurati che il valore di progresso sia compreso tra 0 e 1
     if (this.progress > 1) {
       this.progress = 1;
     } else if (this.progress < 0) {
       this.progress = 0;
     }
 
+    // Se le ore sono negative, significa che non siamo in eccedenza
+    this.isInEccedenza = !isNegative;
+
     console.log('Progress:', this.progress); // Debug per vedere il calcolo
+    console.log('Is in eccedenza:', this.isInEccedenza); // Debug per eccedenza
   }
+
+
 
 
 

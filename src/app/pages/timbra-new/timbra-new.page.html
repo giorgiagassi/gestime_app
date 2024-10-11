@@ -10,7 +10,7 @@
     <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
       <ion-card >
         <ion-card-header>
-          <ion-card-title class="ion-text-center"> Ore Restanti: {{ user?.oreRestanti }}</ion-card-title>
+          <ion-card-title class="ion-text-center">  {{ isInEccedenza ? 'Ore in Eccedenza' : 'Ore Restanti' }}: {{ user?.oreRestanti }}</ion-card-title>
         </ion-card-header>
         <ion-card-content>
           <ion-progress-bar [value]="progress" color="light" [buffer]="buffer"></ion-progress-bar>
