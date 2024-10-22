@@ -45,7 +45,7 @@
       </ion-item>
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'  &&  richiesta.giornoIntero === 'NO'">
         <ion-label position="stacked">N° Ore</ion-label>
-        <ion-input type="time" [(ngModel)]="richiesta.numOreGG"></ion-input>
+        <ion-input type="number" [(ngModel)]="richiesta.numOreGG" (ionChange)="onNumOreChange()"></ion-input>
       </ion-item>
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
         <ion-select label="Causalizzazione" label-placement="stacked" [(ngModel)]="richiesta.causalizzazione">

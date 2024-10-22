@@ -116,7 +116,9 @@ export class NuovaRichiestaPage implements OnInit {
       applicationUserID: userId,
       statoRichiesta: 'Da Approvare'
     };
-
+    if (this.richiesta.numOreGG && this.richiesta.giornoIntero === 'NO') {
+      this.onNumOreChange();  // Converte il numero di ore in formato HH:mm
+    }
     if (this.richiesta.tipoIns === 'Timbratura') {
       body.aData = this.richiesta.daData; // Ensure aData is same as daData for Timbratura
       body.noteSelect = this.timbratura.noteSelect; // Include noteSelect in the body
@@ -133,6 +135,13 @@ export class NuovaRichiestaPage implements OnInit {
         await this.alertService.presentErrorAlert('Errore Durante l\'invio della richiesta');
       }
     });
+  }
+  onNumOreChange() {
+    if (this.richiesta.numOreGG && this.richiesta.numOreGG > 0) {
+      const ore = Math.floor(this.richiesta.numOreGG).toString().padStart(2, '0');
+      const minuti = (Math.round((this.richiesta.numOreGG % 1) * 60)).toString().padStart(2, '0');
+      this.richiesta.numOreGG = `${ore}:${minuti}`;  // Converte in formato HH:mm
+    }
   }
 
 }
