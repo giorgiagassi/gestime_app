@@ -25,12 +25,7 @@ export class TimbraNewPage implements OnInit {
         action: 'uscita',
       },
     },
-    {
-      text: 'Uscita di servizio',
-      data: {
-        action: 'uscita_servizio',
-      },
-    },
+
     {
       text: 'Permesso personale',
       data: {
@@ -47,6 +42,12 @@ export class TimbraNewPage implements OnInit {
       text: 'Recupero ore',
       data: {
         action: 'recupero',
+      },
+    },
+    {
+      text: 'Uscita di servizio',
+      data: {
+        action: 'uscita_servizio',
       },
     },
   ];
