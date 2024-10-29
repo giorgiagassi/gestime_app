@@ -1,67 +1,84 @@
 <ion-content [fullscreen]="true">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
-    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
-    </ion-refresher-content>
+    <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles"></ion-refresher-content>
   </ion-refresher>
   <div class="container ion-page ion-padding-top ion-padding-bottom">
     <ion-grid style="height: 100%; width: 100%">
+
+      <!-- Tipo Inserimento -->
       <ion-item>
-        <ion-select label="Tipo Inserimento" label-placement="stacked" [(ngModel)]="richiesta.tipoIns" (ionChange)="onTipoInsChange()">
+        <ion-select label="Tipo Inserimento" label-placement="stacked" [(ngModel)]="richiesta.tipoIns" (ionChange)="onTipoInsChange()" required>
           <ion-select-option value="Assenza">Assenza</ion-select-option>
           <ion-select-option value="Timbratura">Timbratura</ion-select-option>
           <ion-select-option value="Straordinario">Straordinario</ion-select-option>
         </ion-select>
       </ion-item>
+
+      <!-- Stato Timbratura -->
       <ion-item *ngIf="richiesta.tipoIns === 'Timbratura'">
-        <ion-select label="Stato Timbratura" label-placement="stacked" [(ngModel)]="timbratura.noteSelect">
+        <ion-select label="Stato Timbratura" label-placement="stacked" [(ngModel)]="timbratura.noteSelect" required>
           <ion-select-option value="Entrata">Entrata</ion-select-option>
           <ion-select-option value="Inizio Pausa">Inizio Pausa</ion-select-option>
           <ion-select-option value="Fine Pausa">Fine Pausa</ion-select-option>
           <ion-select-option value="Uscita">Uscita</ion-select-option>
         </ion-select>
       </ion-item>
+
+      <!-- Data Timbratura -->
       <ion-item *ngIf="richiesta.tipoIns === 'Timbratura'">
         <ion-label position="stacked">Data</ion-label>
-        <ion-input type="date" [(ngModel)]="richiesta.daData" (ionChange)="syncDates()"></ion-input>
+        <ion-input type="date" [(ngModel)]="richiesta.daData" (ionChange)="syncDates()" required></ion-input>
       </ion-item>
+
+      <!-- Data Inizio e Data Fine per altri tipi di inserimento -->
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
         <ion-label position="stacked">Data Inizio</ion-label>
-        <ion-input type="date" [(ngModel)]="richiesta.daData"></ion-input>
+        <ion-input type="date" [(ngModel)]="richiesta.daData" required></ion-input>
       </ion-item>
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
         <ion-label position="stacked">Data Fine</ion-label>
-        <ion-input type="date" [(ngModel)]="richiesta.aData"></ion-input>
-      </ion-item>
-      <ion-item *ngIf="richiesta.tipoIns === 'Timbratura' ">
-        <ion-label position="stacked">Ora</ion-label>
-        <ion-input type="time" [(ngModel)]="richiesta.numOreGG"></ion-input>
+        <ion-input type="date" [(ngModel)]="richiesta.aData" required></ion-input>
       </ion-item>
 
+      <!-- Ora per Timbratura -->
+      <ion-item *ngIf="richiesta.tipoIns === 'Timbratura'">
+        <ion-label position="stacked">Ora</ion-label>
+        <ion-input type="time" [(ngModel)]="richiesta.numOreGG" required></ion-input>
+      </ion-item>
+
+      <!-- Giorno Intero e N° Ore -->
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
-        <ion-select label="Giorno Intero" label-placement="stacked" [(ngModel)]="richiesta.giornoIntero">
+        <ion-select label="Giorno Intero" label-placement="stacked" [(ngModel)]="richiesta.giornoIntero" required>
           <ion-select-option value="SI">SI</ion-select-option>
           <ion-select-option value="NO">NO</ion-select-option>
         </ion-select>
       </ion-item>
-      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'  &&  richiesta.giornoIntero === 'NO'">
+      <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura' && richiesta.giornoIntero === 'NO'">
         <ion-label position="stacked">N° Ore</ion-label>
-        <ion-input type="number" [(ngModel)]="richiesta.numOreGG" (ionChange)="onNumOreChange()"></ion-input>
+        <ion-input type="number" [(ngModel)]="richiesta.numOreGG" required></ion-input>
       </ion-item>
+
+      <!-- Causalizzazione -->
       <ion-item *ngIf="richiesta.tipoIns !== 'Timbratura'">
-        <ion-select label="Causalizzazione" label-placement="stacked" [(ngModel)]="richiesta.causalizzazione">
+        <ion-select label="Causalizzazione" label-placement="stacked" [(ngModel)]="richiesta.causalizzazione" required>
           <ion-select-option *ngFor="let causa of causalizzazioni" [value]="causa.causalizzazione">
             {{ causa.causalizzazione }} - {{ causa.descrizioneCausalizzazione }}
           </ion-select-option>
         </ion-select>
       </ion-item>
+
+      <!-- Note -->
       <ion-item>
         <ion-textarea label="Note" [(ngModel)]="richiesta.note"></ion-textarea>
       </ion-item>
+
+      <!-- Pulsante Invia Richiesta -->
       <ion-row>
         <ion-col class="ion-text-center">
-          <ion-button color="success" (click)="inviaRichiesta()">Invia Richiesta</ion-button>
+          <ion-button color="success" (click)="inviaRichiesta()" [disabled]="!isFormValid()">Invia Richiesta</ion-button>
         </ion-col>
       </ion-row>
+
     </ion-grid>
   </div>
 </ion-content>

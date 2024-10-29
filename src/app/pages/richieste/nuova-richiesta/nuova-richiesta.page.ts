@@ -35,7 +35,7 @@ export class NuovaRichiestaPage implements OnInit {
     ggDiCalendario: null,
     causalizzazione: 'TIMBRATURA',
   };
-
+  formattedOre: string | null = null;
   constructor(private router: Router,
               private backButtonService: BackButtonService,
               private richiesteService: RichiesteService,
@@ -110,15 +110,21 @@ export class NuovaRichiestaPage implements OnInit {
   }
 
   async inviaRichiesta() {
+    if (!this.isFormValid()) {
+      await this.alertService.presentErrorAlert('Compila tutti i campi obbligatori.');
+      return;
+    }
     const userId = this.user.id;
     const body = {
       ...this.richiesta,
-      applicationUserID: userId,
-      statoRichiesta: 'Da Approvare'
+      applicationUserID: this.user.id,
+      statoRichiesta: 'Da Approvare',
+      numOreGG: this.richiesta.giornoIntero === 'NO' ? this.convertiOreInHHMM(this.richiesta.numOreGG) : null
     };
-    if (this.richiesta.numOreGG && this.richiesta.giornoIntero === 'NO') {
-      this.onNumOreChange();  // Converte il numero di ore in formato HH:mm
-    }
+
+
+
+
     if (this.richiesta.tipoIns === 'Timbratura') {
       body.aData = this.richiesta.daData; // Ensure aData is same as daData for Timbratura
       body.noteSelect = this.timbratura.noteSelect; // Include noteSelect in the body
@@ -136,12 +142,33 @@ export class NuovaRichiestaPage implements OnInit {
       }
     });
   }
-  onNumOreChange() {
-    if (this.richiesta.numOreGG && this.richiesta.numOreGG > 0) {
-      const ore = Math.floor(this.richiesta.numOreGG).toString().padStart(2, '0');
-      const minuti = (Math.round((this.richiesta.numOreGG % 1) * 60)).toString().padStart(2, '0');
-      this.richiesta.numOreGG = `${ore}:${minuti}`;  // Converte in formato HH:mm
-    }
+  convertiOreInHHMM(oreDecimali: number): string {
+    const ore = Math.floor(oreDecimali).toString().padStart(2, '0');
+    const minuti = Math.round((oreDecimali % 1) * 60).toString().padStart(2, '0');
+    return `${ore}:${minuti}`;
   }
+  isFormValid(): boolean {
+    // Verifica i campi obbligatori in base al tipo di inserimento
+    if (!this.richiesta.tipoIns || !this.richiesta.daData) {
+      return false;
+    }
+    if (this.richiesta.tipoIns !== 'Timbratura' && !this.richiesta.aData) {
+      return false;
+    }
+    if (this.richiesta.tipoIns === 'Timbratura' && !this.timbratura.noteSelect) {
+      return false;
+    }
+    if (this.richiesta.tipoIns !== 'Timbratura' && !this.richiesta.giornoIntero) {
+      return false;
+    }
+    if (this.richiesta.giornoIntero === 'NO' && !this.richiesta.numOreGG) {
+      return false;
+    }
+    if (this.richiesta.tipoIns !== 'Timbratura' && !this.richiesta.causalizzazione) {
+      return false;
+    }
+    return true;
+  }
+
 
 }

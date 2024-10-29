@@ -52,7 +52,7 @@ export class TimbraNewPage implements OnInit {
   ];
   isNearLocation: boolean = false;
   targetLocation: { latitude: any, longitude: any } | null = null;
-  distanceThreshold = 30;
+  distanceThreshold = 60;
   timbrature: any[] = [];
   isLocationEnabled: boolean = true;
   progress: number = 0
