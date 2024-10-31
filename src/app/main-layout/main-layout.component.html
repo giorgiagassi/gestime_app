@@ -1,17 +1,13 @@
 <ion-app>
   <!-- Menu -->
   <ion-menu side="start" menuId="first" contentId="main-content" >
-    <ion-header >
-      <ion-toolbar color="light">
 
-      </ion-toolbar>
-    </ion-header>
-    <ion-content color="light" >
 
+
+    <ion-content color="light" class="ion-padding ion-padding-top">
         <ion-item color="light">
           <ion-icon aria-hidden="true" name="id-card-outline" slot="start"></ion-icon>
           <ion-menu-toggle>
-
             <ion-label routerLink="/timbra-new">Timbra</ion-label>
           </ion-menu-toggle>
         </ion-item>
@@ -23,6 +19,28 @@
         </ion-item>
 
     </ion-content>
+    <ion-footer>
+      <ion-toolbar color="light">
+        <ion-list >
+          <ion-item>
+
+              <ion-icon
+                src="assets/img/logopiccolo.svg"
+                aria-hidden="true" slot="start"
+              ></ion-icon>
+            <ion-label color="primary">
+              <a href="https://www.gestime.it/Account/Login" target="_blank" >
+                gestime.it
+              </a>
+            </ion-label>
+
+            <ion-label  slot="end"><sub>v.1.8</sub></ion-label>
+
+          </ion-item>
+        </ion-list>
+      </ion-toolbar>
+    </ion-footer>
+
   </ion-menu>
 
   <!-- Main Content -->
