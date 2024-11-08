@@ -119,7 +119,7 @@ export class NuovaRichiestaPage implements OnInit {
       ...this.richiesta,
       applicationUserID: this.user.id,
       statoRichiesta: 'Da Approvare',
-      numOreGG: this.richiesta.giornoIntero === 'NO' ? this.convertiOreInHHMM(this.richiesta.numOreGG) : null
+      numOreGG: this.richiesta.giornoIntero === 'NO' ? this.convertiOreInHHMM(this.richiesta.numOreGG) : this.richiesta.numOreGG
     };
 
 
