@@ -26,7 +26,9 @@ const routes: Routes = [
         loadChildren: () => import('./pages/richieste/storico-richieste/storico-richieste.module').then(m => m.StoricoRichiesteModule)
       },
       {path:'nuova-richiesta',
-      loadChildren: () => import('./pages/richieste/nuova-richiesta/nuova-richiesta.module').then(m => m.NuovaRichiestaModule)}
+      loadChildren: () => import('./pages/richieste/nuova-richiesta/nuova-richiesta.module').then(m => m.NuovaRichiestaModule)},
+      {path:'storico-timbrature',
+      loadChildren: () => import('./pages/storico-timbrature/storico-timbrature.module').then(m => m.StoricoTimbratureModule)},
     ]
   }
 ];
