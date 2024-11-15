@@ -2,7 +2,9 @@
   <!-- Menu -->
   <ion-menu side="start" menuId="first" contentId="main-content" >
 
-
+<ion-header>
+  <ion-toolbar></ion-toolbar>
+</ion-header>
 
     <ion-content color="light" class="ion-padding ion-padding-top">
         <ion-item color="light">
@@ -16,6 +18,14 @@
           <ion-menu-toggle>
             <ion-label routerLink="/richieste">Richieste</ion-label>
           </ion-menu-toggle>
+
+        </ion-item>
+        <ion-item color="light">
+          <ion-icon name="checkmark-done-circle-outline" aria-hidden="true" slot="start"></ion-icon>
+          <ion-menu-toggle>
+            <ion-label routerLink="/storico-timbrature">Presenze</ion-label>
+          </ion-menu-toggle>
+
         </ion-item>
 
     </ion-content>
@@ -34,7 +44,7 @@
               </a>
             </ion-label>
 
-            <ion-label  slot="end"><sub>v.1.9</sub></ion-label>
+            <ion-label  slot="end"><sub>v.1.2</sub></ion-label>
 
           </ion-item>
         </ion-list>

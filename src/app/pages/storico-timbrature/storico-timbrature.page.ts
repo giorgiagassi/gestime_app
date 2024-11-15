@@ -1,34 +1,35 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
-import { AlertService } from '../../../providers/alert.service';
-import { LoadingService } from '../../../providers/loading.service';
-import { LoginService } from '../../../providers/login.service';
-import { RichiesteService } from '../../../providers/richieste.service';
-import { Storage } from '@capacitor/storage';
-import {BackButtonService} from "../../../providers/backbutton.service";
+import { Router } from "@angular/router";
+import {AlertService} from "../../providers/alert.service";
+import {LoginService} from "../../providers/login.service";
+import {LoadingService} from "../../providers/loading.service";
+import {StoricoTimbratureService} from "../../providers/storico-timbrature.service";
+import {Storage} from "@capacitor/storage";
+
 
 
 @Component({
-  selector: 'app-storico-richieste',
-  templateUrl: './storico-richieste.page.html',
-  styleUrls: ['./storico-richieste.page.scss'],
+  selector: 'app-storico-timbrature',
+  templateUrl: './storico-timbrature.page.html',
+  styleUrls: ['./storico-timbrature.page.scss'],
 })
-export class StoricoRichiestePage implements OnInit {
+export class StoricoTimbraturePage implements OnInit {
   user: any;
-  richieste: any[] = [];
+  richieste: any;
   selectedYear!: number;
   availableYears: number[] = [];
+  availableMonth: number[] = [];
+  selectedMonth!: number;
 
   constructor(
     private alertService: AlertService,
     private router: Router,
     private loginService: LoginService,
     private loadingService: LoadingService,
-    private richiesteService: RichiesteService,
+    private richiesteService: StoricoTimbratureService,
   ) {}
-
   async ngOnInit() {
-    this.initializeYears();
+    this.initializeYearsAndMonth();
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state && navigation.extras.state['User']) {
       this.user = navigation.extras.state['User'];
@@ -65,30 +66,25 @@ export class StoricoRichiestePage implements OnInit {
       await this.loadStoricoRichieste();
     }
   }
-
-  initializeYears() {
-    const currentYear = new Date().getFullYear();
+  initializeYearsAndMonth() {
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    this.selectedMonth = currentDate.getMonth() + 1; // Mese corrente (1-based)
+    this.availableMonth = Array.from({ length: 12 }, (_, i) => i + 1); // Mesi da 1 a 12
     for (let i = currentYear; i >= currentYear - 10; i--) {
       this.availableYears.push(i);
     }
     this.selectedYear = currentYear;
   }
 
-  async doRefresh(event: any) {
-    await this.loadStoricoRichieste();
-    event.target.complete();
-  }
-
-  async onYearChange() {
-    await this.loadStoricoRichieste();
-  }
 
   async loadStoricoRichieste(): Promise<void> {
     await this.loadingService.presentLoading('Caricamento...');
-    this.richiesteService.getStorico(this.user.id, this.selectedYear).subscribe(
+    this.richiesteService.getStorico(this.user.id, this.selectedYear,  this.selectedMonth).subscribe(
       (data) => {
         this.richieste = data;
         this.loadingService.dismissLoading();
+        console.log(data);
       },
       (error) => {
         console.error('Error loading storico richieste:', error);
@@ -97,8 +93,13 @@ export class StoricoRichiestePage implements OnInit {
       }
     );
   }
-
-  navigateToNuovaRichiesta(): void {
-    this.router.navigate(['/nuova-richiesta']);
+  async doRefresh(event: any) {
+    await this.loadStoricoRichieste();
+    event.target.complete();
   }
+  async onFilterChange() {
+    await this.loadStoricoRichieste();
+  }
+
+
 }
