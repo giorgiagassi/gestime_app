@@ -1,0 +1,5 @@
+.scrollable-content {
+  max-height: calc(100vh - 200px); /* Altezza massima disponibile */
+  overflow-y: auto; /* Abilita lo scrolling verticale */
+  padding: 10px; /* Margini interni opzionali */
+}

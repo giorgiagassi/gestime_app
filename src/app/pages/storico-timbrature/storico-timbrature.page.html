@@ -1,14 +1,14 @@
-<ion-content [fullscreen]="true">
+<ion-content [fullscreen]="true" class="ion-padding ion-padding-top">
   <ion-refresher slot="fixed" (ionRefresh)="doRefresh($event)">
     <ion-refresher-content pullingIcon="arrow-down" refreshingSpinner="circles">
     </ion-refresher-content>
   </ion-refresher>
 
-  <div class="container ion-page  ion-padding-top ion-padding-bottom">
+  <div class="container ion-page ion-padding-top ion-padding-bottom">
     <ion-row>
       <ion-col>
         <ion-item>
-          <ion-label> Anno</ion-label>
+          <ion-label>Anno</ion-label>
           <ion-select [(ngModel)]="selectedYear" (ionChange)="onFilterChange()">
             <ion-select-option *ngFor="let year of availableYears" [value]="year">{{ year }}</ion-select-option>
           </ion-select>
@@ -16,56 +16,69 @@
       </ion-col>
       <ion-col>
         <ion-item>
-          <ion-label> Mese</ion-label>
+          <ion-label>Mese</ion-label>
           <ion-select [(ngModel)]="selectedMonth" (ionChange)="onFilterChange()">
             <ion-select-option *ngFor="let month of availableMonth" [value]="month">{{ month }}</ion-select-option>
           </ion-select>
         </ion-item>
-
       </ion-col>
     </ion-row>
 
     <ion-header>
-      <ion-toolbar>
+      <ion-toolbar color="secondary">
         <ion-row>
-          <ion-col>     <p> Ore Lavorate: <br> <strong>{{richieste?.totali?.totaleOreLavorate}}</strong> </p></ion-col>
-          <ion-col>   <p>  Ore Eccedenti: <br> <strong>{{richieste?.totali?.totaleOreEccedenti}}</strong> </p></ion-col>
-          <ion-col> <p>  Ore Recupero: <br> <strong>{{richieste?.totali?.totaleRecuperoOre}} </strong></p></ion-col>
+          <ion-col>
+            <p>Ore Lavorate: <br><strong>{{ richieste?.totali?.totaleOreLavorate }}</strong></p>
+          </ion-col>
+          <ion-col>
+            <p>Ore Eccedenti: <br><strong>{{ richieste?.totali?.totaleOreEccedenti }}</strong></p>
+          </ion-col>
+          <ion-col>
+            <p>Ore Recupero: <br><strong>{{ richieste?.totali?.totaleRecuperoOre }}</strong></p>
+          </ion-col>
         </ion-row>
       </ion-toolbar>
     </ion-header>
-    <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%; width: 100%">
-      <ng-container *ngFor="let presenza of richieste?.presenze">
-        <ng-container *ngFor="let monthlyAttendance of presenza?.monthlyAttendances">
-          <ion-card *ngFor="let attendance of monthlyAttendance?.attendances">
-            <ion-label class="ion-padding">
-              <h2 class="ion-padding-start">
-                Data {{ attendance.attendance?.checkInTime | date: 'dd/MM/yyyy' }}
-              </h2>
-              <p class="ion-padding-start">
-                Check-In {{ attendance.attendance?.checkInTime | date: 'HH:mm' }}
-              </p>
-              <p class="ion-padding-start">
-                Check-Out: {{ attendance.attendance?.checkOutTime | date: 'HH:mm' }}
-              </p>
-              <p class="ion-padding-start">
-                Ore Lavorate: {{ attendance.attendance?.totalWorkedTime || 'N/A' }}
-              </p>
 
-              <p class="ion-padding-start" *ngIf="attendance.leave">
-                Permesso: {{ attendance.leave.note }} ({{ attendance.leave.causalizzazione }})
-              </p>
-            </ion-label>
-          </ion-card>
+    <ion-grid class="ion-justify-content-center ion-align-items-center" style="width: 100%;">
+      <div class="scrollable-content">
+        <ng-container *ngFor="let presenza of richieste?.presenze">
+          <ng-container *ngFor="let monthlyAttendance of presenza?.monthlyAttendances">
+
+            <ng-container *ngFor="let attendance of monthlyAttendance?.attendances">
+              <ion-card *ngIf="attendance.dailyHours !== '00:00:00'">
+                <ion-label class="ion-padding">
+                  <h2 class="ion-padding-start">
+                    Data {{ attendance.attendance?.checkInTime | date: 'dd/MM/yyyy' }}
+                  </h2>
+                  <p class="ion-padding-start">
+                    Check-In {{ attendance.attendance?.checkInTime | date: 'HH:mm' }}
+                  </p>
+                  <p class="ion-padding-start">
+                    Check-Out: {{ attendance.attendance?.checkOutTime | date: 'HH:mm' }}
+                  </p>
+                  <p class="ion-padding-start">
+                    Ore Lavorate: {{ attendance.attendance?.totalWorkedTime || 'N/A' }}
+                  </p>
+                  <p class="ion-padding-start" *ngIf="attendance.leave">
+                    Permesso: {{ attendance.leave.note }} ({{ attendance.leave.causalizzazione }})
+                  </p>
+                </ion-label>
+              </ion-card>
+            </ng-container>
+
+
+
+
+          </ng-container>
         </ng-container>
-      </ng-container>
 
-      <ion-card *ngIf="!richieste?.presenze?.length">
-        <ion-card-header>
-          <ion-card-title>Nessuna presenza trovata.</ion-card-title>
-        </ion-card-header>
-      </ion-card>
+        <ion-card *ngIf="!richieste?.presenze?.length">
+          <ion-card-header>
+            <ion-card-title>Nessuna presenza trovata.</ion-card-title>
+          </ion-card-header>
+        </ion-card>
+      </div>
     </ion-grid>
-
   </div>
 </ion-content>
