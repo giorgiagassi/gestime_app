@@ -24,7 +24,7 @@
       </ion-col>
     </ion-row>
 
-    <ion-header>
+    <ion-header >
       <ion-toolbar color="secondary">
         <ion-row>
           <ion-col>
@@ -38,7 +38,7 @@
           </ion-col>
         </ion-row>
       </ion-toolbar>
-    </ion-header>
+    </ion-header >
 
     <ion-grid class="ion-justify-content-center ion-align-items-center" style="width: 100%;">
       <div class="scrollable-content">
@@ -58,7 +58,7 @@
                     Check-Out: {{ attendance.attendance?.checkOutTime | date: 'HH:mm' }}
                   </p>
                   <p class="ion-padding-start">
-                    Ore Lavorate: {{ attendance.attendance?.totalWorkedTime || 'N/A' }}
+                    Ore Lavorate: {{ attendance.attendance?.totalWorkedTime || '' }}
                   </p>
                   <p class="ion-padding-start" *ngIf="attendance.leave">
                     Permesso: {{ attendance.leave.note }} ({{ attendance.leave.causalizzazione }})

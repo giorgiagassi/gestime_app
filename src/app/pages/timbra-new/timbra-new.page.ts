@@ -7,6 +7,7 @@ import {Geolocation, PositionOptions} from "@capacitor/geolocation";
 import {LoginService} from "../../providers/login.service";
 import { LoadingService } from '../../providers/loading.service';
 import {interval} from "rxjs";
+import {Haptics, ImpactStyle} from "@capacitor/haptics";
 
 
 
@@ -74,7 +75,6 @@ export class TimbraNewPage implements OnInit {
     const navigation = this.router.getCurrentNavigation();
     if (navigation && navigation.extras && navigation.extras.state && navigation.extras.state['User']) {
       this.user = navigation.extras.state['User'];
-      console.log('User data loaded from navigation:', this.user);
     } else {
       const userId = localStorage.getItem('User') || sessionStorage.getItem('User');
       if (userId) {
@@ -82,9 +82,8 @@ export class TimbraNewPage implements OnInit {
           const userData = await this.loginService.getuserData(userId).toPromise();
           this.user = userData;
           this.calculateProgress();
-          console.log('User data loaded from API:', this.user);
+
         } catch (error) {
-          console.error('Failed to load user data from API:', error);
           await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
         }
       } else {
@@ -92,14 +91,14 @@ export class TimbraNewPage implements OnInit {
         if (value) {
           try {
             this.user = await this.loginService.getuserData(value).toPromise();
-            console.log('User data loaded from API:', this.user);
+
 
           } catch (error) {
-            console.error('Failed to load user data from API:', error);
+
             await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
           }
         } else {
-          console.error('Failed to load user ID');
+
           await this.alertService.presentErrorAlert('Impossibile caricare i dati utente.');
         }
       }
@@ -116,10 +115,10 @@ export class TimbraNewPage implements OnInit {
         const closestSede = await this.findClosestSede();
         if (closestSede) {
           this.targetLocation = closestSede;
-          console.log('Target location set to closest sede:', this.targetLocation);
+
         } else {
           this.isLocationEnabled = false;
-          console.log('No closest sede found, location checks disabled.');
+
         }
         this.checkCurrentLocation(); // Perform location check if there are sedi
       } else {
@@ -154,7 +153,6 @@ export class TimbraNewPage implements OnInit {
         this.targetLocation!.longitude
       );
 
-      console.log('Distance to target location:', distance);
 
       if (distance <= this.distanceThreshold) {
         this.isNearLocation = true;
@@ -177,22 +175,20 @@ export class TimbraNewPage implements OnInit {
     event.target.complete();
   }
 
-
   async promptEnableLocation() {
-    const alert = await this.alertService.presentAlert(
+    const userConfirmed = await this.alertService.presentConfirmAlert(
       'Attiva Geolocalizzazione',
-      'La geolocalizzazione non è attiva. Vuoi attivarla adesso?',
-      ['No', 'Sì']
+      'La geolocalizzazione non è attiva. Vuoi attivarla adesso?'
     );
 
-    if (alert.role === 'cancel') {
-      console.log('Geolocalizzazione non attivata');
+    if (!userConfirmed) {
       this.isLocationEnabled = false;
       return;
     }
 
     await this.openLocationSettings();
     await this.loadingService.presentLoading('Caricamento...');
+
     setTimeout(async () => {
       await this.loadingService.dismissLoading();
       const isNear = await this.checkDistance();
@@ -201,12 +197,12 @@ export class TimbraNewPage implements OnInit {
   }
 
   async openLocationSettings() {
-    await this.alertService.presentAlert(
+    await this.alertService.presentConfirmAlert(
       'Istruzioni',
-      'Per favore, vai nelle impostazioni del dispositivo e attiva la geolocalizzazione.',
-      ['OK']
+      'Per favore, vai nelle impostazioni del dispositivo e attiva la geolocalizzazione.'
     );
   }
+
 
   async checkDistance() {
     try {
@@ -305,7 +301,6 @@ export class TimbraNewPage implements OnInit {
         };
       }
     }
-    console.log( 'closestSede', closestSede);
     return closestSede;
 
   }
@@ -333,7 +328,6 @@ export class TimbraNewPage implements OnInit {
 
   async onCheckIn() {
     if (!this.user || !this.user.id) {
-      console.error('User data is not available');
       return;
     }
 
@@ -355,14 +349,13 @@ export class TimbraNewPage implements OnInit {
 
     this.timbratureService.entrata(this.user.id).subscribe(
       async (response) => {
-        console.log('Entrata', response);
+
         this.user.checkInTime = new Date().toISOString();
         this.timbrature = this.getUserTimbrature();
         await this.loadingService.dismissLoading();
         await this.alertService.presentSuccessAlert('Entrata registrata con successo');
       },
       async (error) => {
-        console.error('Errore Entrata', error);
         await this.loadingService.dismissLoading();
         await this.alertService.presentErrorAlert('Errore durante la registrazione dell\'entrata.');
       }
@@ -393,14 +386,12 @@ export class TimbraNewPage implements OnInit {
 
     this.timbratureService.uscita(this.user.id, tipoUscita).subscribe(
       async (response) => {
-        console.log('Uscita', response);
         this.user.checkOutTime = new Date().toISOString();
         this.timbrature = this.getUserTimbrature();
         await this.loadingService.dismissLoading();
         await this.alertService.presentSuccessAlert('Uscita registrata con successo');
       },
       async (error) => {
-        console.error('Errore Uscita', error);
         await this.loadingService.dismissLoading();
         await this.alertService.presentErrorAlert('Errore durante la registrazione dell\'uscita.');
       }
@@ -409,7 +400,7 @@ export class TimbraNewPage implements OnInit {
 
   async onStartBreak(tipoUscita: string) {
     if (!this.user || !this.user.id) {
-      console.error('User data is not available');
+
       return;
     }
 
@@ -445,7 +436,7 @@ export class TimbraNewPage implements OnInit {
 
   async onEndBreak() {
     if (!this.user || !this.user.id) {
-      console.error('User data is not available');
+
       return;
     }
 
@@ -469,14 +460,13 @@ export class TimbraNewPage implements OnInit {
 
     this.timbratureService.entrata(this.user.id).subscribe(
       async (response) => {
-        console.log('Fine Pausa', response);
+
         this.user.checkInTimePausa = new Date().toISOString();
         this.timbrature = this.getUserTimbrature();
         await this.loadingService.dismissLoading();
         await this.alertService.presentSuccessAlert('Fine Pausa registrata con successo');
       },
       async (error) => {
-        console.error('Errore Fine Pausa', error);
         await this.loadingService.dismissLoading();
         await this.alertService.presentErrorAlert(error.message);
       }
@@ -486,7 +476,7 @@ export class TimbraNewPage implements OnInit {
 
   async onCheckInPermesso() {
     if (!this.user || !this.user.id) {
-      console.error('User data is not available');
+
       return;
     }
 
@@ -508,13 +498,13 @@ export class TimbraNewPage implements OnInit {
 
     this.timbratureService.permessoInizio(this.user.id).subscribe(
       async (response) => {
-        console.log('Inizio Permesso', response);
+
         this.timbrature = this.getUserTimbrature();
         await this.loadingService.dismissLoading();
         await this.alertService.presentSuccessAlert('Inizio permesso registrato con successo');
       },
       async (error) => {
-        console.error('Errore Entrata', error);
+
         await this.loadingService.dismissLoading();
         await this.alertService.presentErrorAlert('Errore durante la registrazione dell\'entrata.');
       }
@@ -523,7 +513,7 @@ export class TimbraNewPage implements OnInit {
 
   async onCheckOutPermesso() {
     if (!this.user || !this.user.id) {
-      console.error('User data is not available');
+
       return;
     }
 
@@ -545,13 +535,12 @@ export class TimbraNewPage implements OnInit {
 
     this.timbratureService.permessoFine(this.user.id).subscribe(
       async (response) => {
-        console.log('Fine Permesso', response);
         this.timbrature = this.getUserTimbrature();
         await this.loadingService.dismissLoading();
         await this.alertService.presentSuccessAlert('Fine permesso registrato con successo');
       },
       async (error) => {
-        console.error('Errore permesso', error);
+
         await this.loadingService.dismissLoading();
         await this.alertService.presentErrorAlert('Errore durante la registrazione.');
       }
@@ -647,14 +636,14 @@ export class TimbraNewPage implements OnInit {
       const lon = coordinates.coords.longitude;
       this.reverseGeocode(lat, lon);
     } catch (error) {
-      console.error('Error getting location', error);
+
     }
   }
 
   async reverseGeocode(lat: number, lon: number) {
     const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`);
     const data = await response.json();
-    console.log(data)
+
     this.currentAddress = data.display_name;
   }
 
@@ -664,7 +653,7 @@ export class TimbraNewPage implements OnInit {
 
   calculateProgress() {
     if (!this.user?.oreRestanti || !this.user?.oreLavorative) {
-      console.error("Ore restanti o ore lavorative non definite!");
+
       return;
     }
 
@@ -695,15 +684,11 @@ export class TimbraNewPage implements OnInit {
 
     // Se le ore sono negative, significa che non siamo in eccedenza
     this.isInEccedenza = !isNegative;
-
-    console.log('Progress:', this.progress); // Debug per vedere il calcolo
-    console.log('Is in eccedenza:', this.isInEccedenza); // Debug per eccedenza
   }
 
 
-
-
-
-
+  async onButtonPress() {
+    await Haptics.impact({ style: ImpactStyle.Medium }); // Vibrazione media quando premi
+  }
 
 }

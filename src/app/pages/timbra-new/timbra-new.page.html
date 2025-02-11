@@ -8,56 +8,78 @@
   <div class="container ion-page  ion-padding-top ion-padding-bottom" style="margin-top: 10%; margin-bottom: 10%">
 
     <ion-grid class="ion-justify-content-center ion-align-items-center" style="height: 100%;">
-      <ion-card >
+      <ion-card class="custom-card">
         <ion-card-header>
-          <ion-card-title class="ion-text-center">  {{ isInEccedenza ? 'Ore in Eccedenza' : 'Ore Restanti' }}: {{ user?.oreRestanti }}</ion-card-title>
+          <ion-card-title class="ion-text-center">
+            {{ isInEccedenza ? 'Ore in Eccedenza' : 'Ore Restanti' }}: {{ user?.oreRestanti }}
+          </ion-card-title>
         </ion-card-header>
         <ion-card-content>
-          <ion-progress-bar [value]="progress" color="light" [buffer]="buffer"></ion-progress-bar>
+          <div class="progress-container">
+            <ion-progress-bar [value]="progress" color="primary"></ion-progress-bar>
+          </div>
         </ion-card-content>
       </ion-card>
-      <!-- ingresso -->
-      <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button id="open-action-sheet-ingresso" color="success" size="large"
-                    [disabled]="!isNearLocation || user?.checkInTime || !isLocationEnabled || user?.permessiBrevi.length > 0"
-                    (click)="onCheckIn()">Ingresso</ion-button>
+
+
+
+
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12" size-md="6">
+          <ion-button expand="block" color="success" class="custom-button"
+                      [disabled]="!isNearLocation || user?.checkInTime || !isLocationEnabled || user?.permessiBrevi.length > 0"
+                      (click)="onCheckIn()"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="log-in-outline"></ion-icon> Ingresso
+          </ion-button>
+        </ion-col>
       </ion-row>
 
-      <!-- pausa pranzo -->
-      <!-- pausa pranzo -->
-      <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button *ngIf="!user?.checkOutTimePausa" color="secondary" size="large"
-                    [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
-                    (click)="onStartBreak('Pausa')">Inizio Pausa</ion-button>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12">
+          <ion-button expand="block" color="warning" class="custom-button"    style="--color: white !important;" *ngIf="!user?.checkOutTimePausa"
+                      [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
+                      (click)="onStartBreak('Pausa')"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="pause-outline"></ion-icon> Inizio Pausa
+          </ion-button>
 
-        <ion-button *ngIf="user?.checkOutTimePausa && !user?.checkInTimePausa" color="secondary" size="large"
-                    [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
-                    (click)="onEndBreak()">Fine Pausa</ion-button>
+          <ion-button expand="block" color="warning" class="custom-button"  *ngIf="user?.checkOutTimePausa && !user?.checkInTimePausa"
+                      [disabled]="!isNearLocation || !isLocationEnabled || user?.permessiBrevi.length > 0"
+                      (click)="onEndBreak()"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="play-outline"></ion-icon> Fine Pausa
+          </ion-button>
 
-        <ion-button *ngIf="user?.checkOutTimePausa && user?.checkInTimePausa " color="secondary" size="large"
-                    disabled>Pausa completata</ion-button>
+          <ion-button expand="block" color="warning" class="custom-button" disabled *ngIf="user?.checkOutTimePausa && user?.checkInTimePausa">
+            <ion-icon slot="start" name="checkmark-circle-outline"></ion-icon> Pausa Completata
+          </ion-button>
+        </ion-col>
       </ion-row>
 
-
-      <!-- uscita -->
-      <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button id="open-action-sheet-uscita" color="danger" size="large"
-                    [disabled]="!isNearLocation || user?.checkOutTime || !isLocationEnabled || user?.permessiBrevi.length > 0"
-        >Uscita</ion-button>
-        <ion-action-sheet trigger="open-action-sheet-uscita" [buttons]="actionSheetButtonsUscita"
-                          (didDismiss)="handleActionSheetDismiss($event)"></ion-action-sheet>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="12">
+          <ion-button id="open-action-sheet-uscita" color="danger" class="custom-button"
+                      [disabled]="!isNearLocation || user?.checkOutTime"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="log-out-outline"></ion-icon> Uscita
+          </ion-button>
+          <ion-action-sheet trigger="open-action-sheet-uscita" [buttons]="actionSheetButtonsUscita"
+                            (didDismiss)="handleActionSheetDismiss($event)">
+          </ion-action-sheet>
+        </ion-col>
       </ion-row>
 
-<!--      USCITA BREVE-->
-      <ion-row class="ion-justify-content-center ion-align-items-center">
-        <ion-button id="open-action-sheet-PERMESSO"  size="small" class="custom-permesso-button" expand="block" (click)="setOpenPermesso(true)"  [disabled]="!isNearLocation || !isLocationEnabled"
-                   >Permesso Breve</ion-button>
+      <ion-row class="ion-justify-content-center">
+        <ion-col size="6" size-md="6">
+          <ion-button expand="block" class="custom-permesso-button custom-button" (click)="setOpenPermesso(true)"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="time-outline"></ion-icon> Permesso
+          </ion-button>
+        </ion-col>
+
+        <ion-col size="6" size-md="6">
+          <ion-button expand="block" color="secondary" (click)="setOpen(true)" class="custom-riepilogo-button custom-button"   (mousedown)="onButtonPress()">
+            <ion-icon slot="start" name="eye"></ion-icon> Riepilogo
+          </ion-button>
+        </ion-col>
       </ion-row>
 
-      <ion-row class="ion-justify-content-center ion-align-items-center ion-padding">
-        <ion-button (click)="setOpen(true)" class="ion-float-end ion-padding" color="secondary">Riepilogo
-          <ion-icon slot="icon-only" name="eye"></ion-icon></ion-button>
-      </ion-row>
 
     </ion-grid>
 
@@ -124,11 +146,11 @@
       <ion-row class="ion-justify-content-between">
         <ion-col>
           <ion-button id="open-action-sheet-inizio-permesso" color="success" size="large"
-                      [disabled]="!isNearLocation || user?.permessiBrevi[0].inizioPermesso || !isLocationEnabled"
+                      [disabled]="!isNearLocation || user?.permessiBrevi[0].inizioPermesso || !isLocationEnabled"   (mousedown)="onButtonPress()"
                       (click)="onCheckInPermesso()" >Inizio Permesso</ion-button>
         </ion-col>
         <ion-col>
-          <ion-button id="open-action-sheet-fine-permesso" color="danger" size="large"
+          <ion-button id="open-action-sheet-fine-permesso" color="danger" size="large"   (mousedown)="onButtonPress()"
                       [disabled]="!isNearLocation || !isLocationEnabled"
                       (click)="onCheckOutPermesso()">Fine Permesso</ion-button>
         </ion-col>
