@@ -142,9 +142,9 @@ export class NuovaRichiestaPage implements OnInit {
       }
     });
   }
-  convertiOreInHHMM(oreDecimali: number): string {
-    const ore = Math.floor(oreDecimali).toString().padStart(2, '0');
-    const minuti = Math.round((oreDecimali % 1) * 60).toString().padStart(2, '0');
+  convertiOreInHHMM(oreInput: number): string {
+    const ore = Math.floor(oreInput).toString().padStart(2, '0'); // Prende la parte intera come ore
+    const minuti = Math.round((oreInput % 1) * 100).toString().padStart(2, '0'); // Prende la parte decimale come minuti diretti
     return `${ore}:${minuti}`;
   }
   isFormValid(): boolean {
