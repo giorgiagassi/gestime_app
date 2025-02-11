@@ -71,3 +71,7 @@ ion-progress-bar {
   --color: white !important; /* Forza il colore del testo in bianco */
   --ion-color-warning-contrast: white !important; /* Forza il contrasto del testo su fondo giallo */
 }
+.custom-button[color="success"] {
+  --color: white !important; /* Forza il colore del testo in bianco */
+  --ion-color-success-contrast: white !important; /* Forza il contrasto del testo su fondo giallo */
+}
